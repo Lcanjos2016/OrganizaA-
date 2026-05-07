@@ -39,7 +39,7 @@ export default function ChatScreen() {
           onChangeText={setMensagem}
         />
         <TouchableOpacity style={styles.botaoEnviar}>
-          <Text style={styles.textoBotao}>></Text>
+          <Text style={styles.textoBotao}></Text>
         </TouchableOpacity>
       </View>
     </View>
