@@ -4,43 +4,44 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen({ navigation }) {
   return (
-    <LinearGradient 
-      colors={['#2B4C9B', '#5A82E3', '#FFFFFF']} 
+    <LinearGradient
+      colors={['#28468d', '#5a7fd4', '#FFFFFF']}
       style={styles.container}
     >
       <View style={styles.content}>
-        {/* Logo Mockup - Substitua pela sua imagem se tiver */}
+        {/* Logo via Link Direto */}
         <View style={styles.logoContainer}>
-           <View style={styles.iconCircle}>
-              <Text style={{fontSize: 50}}>🎓</Text>
-           </View>
-           <Text style={styles.logoText}>OrganizaAÊ</Text>
+          <Image
+            source={{ uri: 'https://i.postimg.cc/9fLpppjm/img0303.png' }}
+            style={styles.logoImage}
+          />
+          <Text style={styles.logoText}>Login</Text>
         </View>
 
-        <Text style={styles.label}>Login</Text>
-
-        <TextInput 
-          style={styles.input} 
-          placeholder="Insira o e-mail" 
+        <TextInput
+          style={styles.input}
+          placeholder="Insira o e-mail"
           placeholderTextColor="#FFF"
         />
-        
-        <TextInput 
-          style={styles.input} 
-          placeholder="Insira senha" 
+
+        <TextInput
+          style={styles.input}
+          placeholder="Insira senha"
           placeholderTextColor="#FFF"
-          secureTextEntry 
+          secureTextEntry
         />
 
-        <TouchableOpacity style={styles.buttonEntrar}>
+        <TouchableOpacity style={[styles.buttonEntrar, { marginTop: 50 }]}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-          <Text style={styles.linkText}>Não é cadastrado? <Text style={{fontWeight: 'bold'}}>Clique aqui</Text></Text>
+          <Text style={styles.linkText}>
+            Não é cadastrado? <Text style={{ fontWeight: 'bold' }}>Clique aqui</Text>
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={{marginTop: 20}}>
+        <TouchableOpacity style={{ marginTop: 60 }}>
           <Text style={styles.sairText}>Sair</Text>
         </TouchableOpacity>
       </View>
@@ -49,30 +50,67 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
-  logoContainer: { alignItems: 'center', marginBottom: 30 },
-  iconCircle: { width: 100, height: 100, borderRadius: 50, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center' },
-  logoText: { color: '#FFF', fontSize: 24, fontWeight: 'bold', marginTop: 10 },
-  label: { color: '#FFF', fontSize: 18, marginBottom: 20 },
-  input: { 
-    width: '85%', 
-    borderWidth: 2, 
-    borderColor: '#FFF', 
-    borderRadius: 25, 
-    padding: 12, 
-    marginBottom: 15, 
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  logoImage: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
+    // Sombra para destacar a logo
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  logoText: {
     color: '#FFF',
-    textAlign: 'center'
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
-  buttonEntrar: { 
-    backgroundColor: '#1E3A8A', 
-    paddingHorizontal: 50, 
-    paddingVertical: 12, 
-    borderRadius: 25, 
-    marginTop: 20 
+  label: {
+    color: '#FFF',
+    fontSize: 18,
+    marginBottom: 20,
   },
-  buttonText: { color: '#FFF', fontSize: 18 },
-  linkText: { color: '#1E3A8A', marginTop: 30 },
-  sairText: { color: '#1E3A8A', fontSize: 16 }
+  input: {
+    width: '85%',
+    borderWidth: 2,
+    borderColor: '#FFF',
+    borderRadius: 20,
+    padding: 13,
+    marginBottom: 25,
+    color: '#FFF',
+    textAlign: 'center',
+  },
+  buttonEntrar: {
+    backgroundColor: '#1E3A8A',
+    paddingHorizontal: 50,
+    paddingVertical: 12,
+    borderRadius: 20,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+  },
+  linkText: {
+    color: '#1E3A8A',
+    marginTop: 30,
+  },
+  sairText: {
+    color: '#1E3A8A',
+    fontSize: 16,
+  },
 });
