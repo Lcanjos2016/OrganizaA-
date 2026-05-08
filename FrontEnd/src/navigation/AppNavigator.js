@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import CadastroScreen from '../screens/CadastroScreen';
 import AreaEstudoScreen from '../screens/AreaEstudoScreen';
+import MontarCronogramaScreen from '../screens/MontarCronogramaScreen';
 
 const Stack = createStackNavigator();
 
@@ -12,6 +13,7 @@ export default function AppNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Cadastro" component={CadastroScreen} />
       <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} />
+      <Stack.Screen name="Cronograma" component={MontarCronogramaScreen} options={{ headerShown: false }} /> 
     </Stack.Navigator>
   );
 }
