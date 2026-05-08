@@ -14,6 +14,10 @@ export default function CadastroScreen({ navigation }) {
   const linkOlhoAberto = 'https://cdn-icons-png.flaticon.com/512/709/709612.png';
   const linkOlhoFechado = 'https://cdn-icons-png.flaticon.com/512/2767/2767146.png';
 
+  const handleCadastro = () => {
+    navigation.navigate('AreaEstudo');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -56,9 +60,17 @@ export default function CadastroScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.buttonCadastrar}>
+          <TouchableOpacity style={styles.buttonCadastrar} onPress={handleCadastro}>
             <Text style={styles.buttonText}>Cadastrar</Text>
           </TouchableOpacity>
+
+          {/* --- TRECHO ADICIONADO AQUI --- */}
+          <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
+            <Text style={styles.linkText}>
+              Pular para o app? <Text style={{ fontWeight: 'bold' }}>Clique aqui</Text>
+            </Text>
+          </TouchableOpacity>
+          {/* ----------------------------- */}
 
           <Text style={styles.loginWith}>Login com</Text>
           <TouchableOpacity style={styles.googleButton}>
@@ -106,6 +118,14 @@ const styles = StyleSheet.create({
   iconImage: { width: 22, height: 22, tintColor: '#333' },
   buttonCadastrar: { backgroundColor: '#1E3A8A', width: '70%', paddingVertical: 12, borderRadius: 20, marginTop: 20, alignItems: 'center', elevation: 5 },
   buttonText: { color: '#FFF', fontSize: 20, fontWeight: 'bold' },
+  
+  /* --- ESTILO ADICIONADO AQUI PARA O LINK --- */
+  linkText: {
+    marginTop: 15,
+    fontSize: 14,
+    color: '#333',
+  },
+  
   loginWith: { marginTop: 20, color: '#666' },
   googleButton: { marginTop: 10, marginBottom: 30 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' },

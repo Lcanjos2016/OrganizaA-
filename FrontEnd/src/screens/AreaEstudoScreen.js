@@ -7,7 +7,8 @@ import {
   StyleSheet, 
   SafeAreaView, 
   KeyboardAvoidingView, 
-  Platform 
+  Platform,
+  Image // <-- Importação do Image adicionada aqui
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,8 +16,6 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 export default function AreaEstudoScreen({ navigation }) {
   
   // --- Funções de Navegação ---
-  // Quando você criar as outras telas no AppNavigator, basta trocar o console.log
-  // pelo comando de navegação, por exemplo: navigation.navigate('Cronograma')
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => console.log('Navegar para Cronograma');
   const irParaDisciplinas = () => console.log('Navegar para Disciplinas');
@@ -29,23 +28,25 @@ export default function AreaEstudoScreen({ navigation }) {
       {/* --- Cabeçalho --- */}
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
-          <MaterialCommunityIcons name="bookshelf" size={28} color="#3B4E6B" />
+          <MaterialCommunityIcons name="bookshelf" size={28} color="#2B4C9B" />
           <Text style={styles.headerTitle}>Área de Estudos</Text>
         </View>
         <TouchableOpacity onPress={handleSair} style={styles.logoutButton}>
-          <MaterialCommunityIcons name="logout" size={26} color="#3B4E6B" />
+          <MaterialCommunityIcons name="exit-to-app" size={28} color="#2B4C9B" />
         </TouchableOpacity>
       </View>
 
       {/* --- Conteúdo Principal com Gradiente --- */}
       <LinearGradient 
-        colors={['#38519E', '#DCE7F3']} 
+        colors={['#2B4C9B', '#9DBCE0', '#EBF3FA']} 
         style={styles.mainGradient}
       >
+        {/* --- LOGO ATUALIZADA AQUI --- */}
         <View style={styles.logoContainer}>
-          <View style={styles.logoIcon}>
-            <Text style={{ fontSize: 32 }}>🎓</Text>
-          </View>
+          <Image 
+            source={{ uri: 'https://i.postimg.cc/9fLpppjm/img0303.png' }} 
+            style={styles.logoImage} 
+          />
           <Text style={styles.logoText}>OrganizaAê</Text>
         </View>
 
@@ -70,22 +71,22 @@ export default function AreaEstudoScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* --- Barra de Pesquisa / Dicas (Com ajuste para o teclado) --- */}
+        {/* --- Barra de Pesquisa / Dicas --- */}
         <KeyboardAvoidingView 
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardWrapper}
         >
           <View style={styles.chatInputContainer}>
             <View style={styles.chatAvatar}>
-              <Text style={{ fontSize: 20 }}>🤖</Text>
+              <MaterialCommunityIcons name="robot-outline" size={24} color="#2B4C9B" />
             </View>
             <TextInput 
               style={styles.input} 
               placeholder="Peça suas dicas aqui" 
-              placeholderTextColor="#829DC0"
+              placeholderTextColor="#798C9C"
             />
             <TouchableOpacity>
-              <Feather name="mic" size={22} color="#3B4E6B" />
+              <Feather name="mic" size={22} color="#2B4C9B" />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -94,19 +95,19 @@ export default function AreaEstudoScreen({ navigation }) {
       {/* --- Menu de Navegação Inferior --- */}
       <View style={styles.bottomNav}>
         <TouchableOpacity>
-          <Feather name="settings" size={26} color="#3B4E6B" />
+          <Feather name="settings" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         <TouchableOpacity>
-          <MaterialCommunityIcons name="tablet-dashboard" size={26} color="#3B4E6B" />
+          <MaterialCommunityIcons name="devices" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Feather name="home" size={28} color="#1A2A4A" />
+          <Feather name="home" size={28} color="#1E3A8A" />
         </TouchableOpacity>
         <TouchableOpacity>
-          <MaterialCommunityIcons name="school-outline" size={28} color="#3B4E6B" />
+          <MaterialCommunityIcons name="school-outline" size={30} color="#6A7A8C" />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Feather name="bell" size={26} color="#3B4E6B" />
+          <Feather name="bell" size={26} color="#6A7A8C" />
         </TouchableOpacity>
       </View>
 
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   headerTitle: { 
     fontSize: 18, 
     fontWeight: 'bold', 
-    color: '#3B4E6B', 
+    color: '#2B4C9B', 
     marginLeft: 10 
   },
   logoutButton: {
@@ -154,15 +155,16 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginBottom: 20 
   },
-  logoIcon: { 
-    width: 65, 
-    height: 65, 
-    borderRadius: 35, 
-    borderWidth: 2, 
-    borderColor: '#FFF', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginBottom: 5 
+  /* --- ESTILO DA IMAGEM ADICIONADO AQUI --- */
+  logoImage: { 
+    width: 100, 
+    height: 100, 
+    resizeMode: 'contain',
+    marginBottom: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   logoText: { 
     color: '#FFF', 
@@ -173,26 +175,25 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     fontWeight: '600', 
     color: '#FFF', 
-    marginBottom: 20 
+    marginBottom: 25 
   },
   menuContainer: { 
     width: '100%' 
   },
   menuButton: { 
-    backgroundColor: '#B4C7DF', 
+    backgroundColor: '#A5C0DF', 
     paddingVertical: 18, 
     paddingHorizontal: 20, 
     borderRadius: 15, 
     marginBottom: 15,
-    // Efeitos de sombra para o botão saltar na tela (Neumorfismo leve)
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5 
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4.5,
+    elevation: 6 
   },
   menuButtonText: { 
-    color: '#2B3F66', 
+    color: '#1E3A8A', 
     fontSize: 16, 
     fontWeight: 'bold' 
   },
@@ -204,18 +205,18 @@ const styles = StyleSheet.create({
   chatInputContainer: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    borderWidth: 1.5, 
-    borderColor: '#829DC0', 
+    borderWidth: 1, 
+    borderColor: '#8DA4C4', 
     borderRadius: 30, 
     padding: 6, 
     paddingRight: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)', // Fundo levemente translúcido
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', 
   },
   chatAvatar: { 
-    width: 42, 
-    height: 42, 
-    backgroundColor: '#B4C7DF', 
-    borderRadius: 21, 
+    width: 44, 
+    height: 44, 
+    backgroundColor: '#A5C0DF', 
+    borderRadius: 22, 
     justifyContent: 'center', 
     alignItems: 'center', 
     marginRight: 10 
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
   input: { 
     flex: 1, 
     paddingVertical: 10, 
-    color: '#3B4E6B', 
+    color: '#2B4C9B', 
     fontSize: 15,
     fontWeight: '500'
   },
@@ -233,8 +234,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     paddingVertical: 15, 
     backgroundColor: '#FFF',
-    borderTopWidth: 1,
-    borderColor: '#EAEAEA',
-    elevation: 10, // Sombra sutil na barra de baixo
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: -3 },
+    shadowRadius: 5,
   }
 });
