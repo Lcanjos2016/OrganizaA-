@@ -11,8 +11,8 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Cadastro" component={CadastroScreen} />
-      <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} />
+      <Stack.Screen name="Cadastro" component={CadastroScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} options={{ headerShown: false}} />
       <Stack.Screen name="Cronograma" component={MontarCronogramaScreen} options={{ headerShown: false }} /> 
     </Stack.Navigator>
   );

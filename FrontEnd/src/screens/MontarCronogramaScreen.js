@@ -139,7 +139,9 @@ export default function MontarCronogramaScreen({ navigation }) {
           </View>
           
           <Text style={styles.helperText}>Utilize os códigos para preencher o cronograma</Text>
-          <View style={{ flex: 1, minHeight: 20 }} />
+          
+          <View style={{ flex: 1, minHeight: 40 }} />
+          
         </ScrollView>
 
         {/* --- Barra de Pesquisa / Dicas --- */}
@@ -160,23 +162,30 @@ export default function MontarCronogramaScreen({ navigation }) {
 // --- Estilos ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 15, paddingBottom: 15, backgroundColor: '#FFF' },
+  
+  // --- ALTERAÇÃO AQUI: paddingTop aumentado de 10 para 35 para descer o cabeçalho ---
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
+  
   iconButton: { padding: 5 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#2B4C9B' },
-  mainGradient: { flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, paddingTop: 20, paddingHorizontal: 20 },
-  scrollContent: { flexGrow: 1, paddingBottom: 20 },
+  
+  mainGradient: { flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, paddingTop: 15, paddingHorizontal: 20 },
+  scrollContent: { flexGrow: 1, paddingBottom: 10 },
+  
   tableContainer: { backgroundColor: '#FFF', borderRadius: 15, overflow: 'hidden', marginBottom: 20, elevation: 5, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   tableHeader: { flexDirection: 'row', backgroundColor: '#1C2E4A', paddingVertical: 12 },
   tableHeaderText: { flex: 1, color: '#FFF', fontWeight: 'bold', fontSize: 12, textAlign: 'center' },
   tableRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#A5C0DF' },
   tableCell: { flex: 1, borderRightWidth: 1, borderRightColor: '#A5C0DF', justifyContent: 'center', alignItems: 'center' },
   cellInput: { fontWeight: 'bold', fontSize: 11, color: '#1C2E4A', textAlign: 'center', width: '100%', paddingVertical: 12 },
+  
   actionButtonsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
   actionBtn: { flex: 1, paddingVertical: 10, borderRadius: 20, alignItems: 'center', marginHorizontal: 5, elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 2 } },
   btnSalvar: { backgroundColor: '#1B3668' },
   btnEsvaziar: { backgroundColor: '#5AD6B6' },
   btnEditar: { backgroundColor: '#FFFFFF' },
   actionBtnText: { fontWeight: 'bold', fontSize: 14 },
+  
   legendContainer: { backgroundColor: '#FFF', borderRadius: 15, padding: 15, marginBottom: 10, elevation: 4, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
   legendTitle: { color: '#2B4C9B', fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginBottom: 5 },
   separator: { height: 1, backgroundColor: '#2B4C9B', marginBottom: 10, opacity: 0.5 },
@@ -184,7 +193,8 @@ const styles = StyleSheet.create({
   column: { flex: 1 },
   legendText: { fontSize: 11, color: '#333', fontWeight: '500', marginBottom: 4 },
   helperText: { textAlign: 'center', color: '#2B4C9B', fontSize: 12, fontWeight: '500', marginBottom: 10 },
-  keyboardWrapper: { width: '100%', paddingBottom: 20 },
+  
+  keyboardWrapper: { width: '100%', paddingBottom: 35 },
   chatInputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#8DA4C4', borderRadius: 30, padding: 6, paddingRight: 15, backgroundColor: 'rgba(255, 255, 255, 0.4)' },
   chatAvatar: { width: 44, height: 44, backgroundColor: '#A5C0DF', borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
   chatInputText: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' }
