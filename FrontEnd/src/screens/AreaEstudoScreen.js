@@ -18,7 +18,10 @@ export default function AreaEstudoScreen({ navigation }) {
   // --- Funções de Navegação ---
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
-  const irParaDisciplinas = () => console.log('Navegar para Disciplinas');
+  
+  // Ligação para a tela de Disciplinas feita aqui!
+  const irParaDisciplinas = () => navigation.navigate('Disciplinas');
+  
   const irParaFaltas = () => console.log('Navegar para Faltas');
   const irParaNotas = () => console.log('Navegar para Notas');
 
@@ -118,7 +121,6 @@ export default function AreaEstudoScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   
-  // --- ALTERAÇÃO AQUI: Cabeçalho com o mesmo espaçamento (paddingTop: 35) da tela de Cronograma ---
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
   headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#2B4C9B', marginLeft: 10 },

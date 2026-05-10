@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import CadastroScreen from '../screens/CadastroScreen';
 import AreaEstudoScreen from '../screens/AreaEstudoScreen';
 import MontarCronogramaScreen from '../screens/MontarCronogramaScreen';
+import DisciplinaAtividadeScreen from '../screens/DisciplinaAtividadeScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ export default function AppNavigator() {
       <Stack.Screen name="Cadastro" component={CadastroScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} options={{ headerShown: false}} />
       <Stack.Screen name="Cronograma" component={MontarCronogramaScreen} options={{ headerShown: false }} /> 
+      <Stack.Screen name="DisciplinaAtividade" component={DisciplinaAtividadeScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
