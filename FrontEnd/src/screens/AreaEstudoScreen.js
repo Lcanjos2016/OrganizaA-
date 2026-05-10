@@ -20,10 +20,11 @@ export default function AreaEstudoScreen({ navigation }) {
   const irParaCronograma = () => navigation.navigate('Cronograma');
   
   // Ligação para a tela de Disciplinas feita aqui!
-  const irParaDisciplinas = () => navigation.navigate('Disciplinas');
+  const irParaDisciplinas = () => navigation.navigate('DisciplinaAtividade');
   
-  const irParaFaltas = () => console.log('Navegar para Faltas');
-  const irParaNotas = () => console.log('Navegar para Notas');
+  const irParaFaltas = () => navigation.navigate('Faltas');
+ 
+  const irParaNotas = () => navigation.navigate('Notas');
 
   return (
     <SafeAreaView style={styles.container}>
