@@ -31,7 +31,11 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
         />
 
-        <TouchableOpacity style={[styles.buttonEntrar, { marginTop: 50 }]}>
+        {/* ADICIONE O OPRESS AQUI ABAIXO */}
+        <TouchableOpacity 
+          style={[styles.buttonEntrar, { marginTop: 50 }]}
+          onPress={() => navigation.navigate('Preferencias')}
+        >
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
