@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   buttonCadastrar: { backgroundColor: '#1E3A8A', width: '70%', paddingVertical: 12, borderRadius: 20, marginTop: 20, alignItems: 'center', elevation: 5 },
   buttonText: { color: '#FFF', fontSize: 20, fontWeight: 'bold' },
   
-  /* --- ESTILO ADICIONADO AQUI PARA O LINK --- */
+  
   linkText: {
     marginTop: 15,
     fontSize: 14,

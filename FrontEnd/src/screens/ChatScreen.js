@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'r
 export default function ChatScreen() {
   const [mensagem, setMensagem] = useState('');
   
-  // Exemplo de lista para as mensagens (QA: teste com dados mockados antes da API)
+  
   const [conversa, setConversa] = useState([
     { id: '1', texto: 'Olá! Como posso ajudar na sua pesquisa hoje?', remetente: 'ia' },
   ]);
