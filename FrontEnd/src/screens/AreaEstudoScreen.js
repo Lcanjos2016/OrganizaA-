@@ -15,11 +15,11 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function AreaEstudoScreen({ navigation }) {
   
-  // --- Funções de Navegação ---
+  
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
   
-  // Ligação para a tela de Disciplinas feita aqui!
+  
   const irParaDisciplinas = () => navigation.navigate('DisciplinaAtividade');
   
   const irParaFaltas = () => navigation.navigate('Faltas');
@@ -118,7 +118,7 @@ export default function AreaEstudoScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   

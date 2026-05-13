@@ -14,20 +14,20 @@ import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 
 export default function SituacaoNotasScreen({ navigation }) {
   
-  // Estado para as notas (começa com 3)
+  
   const [notas, setNotas] = useState([
     { id: '1', label: 'Nota1', valor: '00.00' },
     { id: '2', label: 'Nota2', valor: '00.00' },
     { id: '3', label: 'Nota3', valor: '00.00' },
   ]);
 
-  // Função para adicionar nova nota
+  
   const adicionarNota = () => {
     const novaId = (notas.length + 1).toString();
     setNotas([...notas, { id: novaId, label: `Nota${novaId}`, valor: '00.00' }]);
   };
 
-  // Dados da tabela inferior
+  
   const historicoNotas = [
     { id: '1', disciplina: 'xxxxxxxxxxxxxxx', final: 'xx.xx', situacao: 'Aprovado' },
     { id: '2', disciplina: 'xxxxxxxxxxxxxxx', final: 'xx.xx', situacao: 'Prova Final' },
@@ -133,7 +133,7 @@ export default function SituacaoNotasScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   header: { 
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: { flexGrow: 1, paddingBottom: 30, alignItems: 'center' },
 
-  // --- Input Card ---
+  
   inputCard: {
     backgroundColor: '#A5C0DF', width: '100%', borderRadius: 20, padding: 20, marginBottom: 20,
     elevation: 4, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   btnAdicionarText: { color: '#FFF', fontWeight: 'bold', fontSize: 12 },
 
-  // --- Botões ---
+  
   btnCalcular: {
     backgroundColor: '#FFF', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 20,
     marginBottom: 25, elevation: 4, shadowColor: '#000', shadowOpacity: 0.2
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   btnPdfText: { color: '#1B3668', fontWeight: 'bold', fontSize: 14 },
 
-  // --- Tabela ---
+  
   tableCard: {
     backgroundColor: '#FFF', width: '100%', borderRadius: 15, overflow: 'hidden', marginBottom: 10,
     elevation: 5, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5
@@ -202,9 +202,9 @@ const styles = StyleSheet.create({
   cellText: { fontSize: 10, color: '#333', textAlign: 'center', fontWeight: 'bold' },
   cellSituacao: { alignItems: 'center', justifyContent: 'center' },
   
-  // Badges (Etiquetas)
+  
   badge: { paddingVertical: 2, paddingHorizontal: 8, borderRadius: 10, minWidth: 70, alignItems: 'center' },
-  badgeAprovado: { backgroundColor: '#BDECB6' }, // Verde claro
-  badgeProvaFinal: { backgroundColor: '#F9E79F' }, // Amarelo claro
+  badgeAprovado: { backgroundColor: '#BDECB6' }, 
+  badgeProvaFinal: { backgroundColor: '#F9E79F' },
   badgeText: { fontSize: 9, fontWeight: 'bold', color: '#1C2E4A' }
 });

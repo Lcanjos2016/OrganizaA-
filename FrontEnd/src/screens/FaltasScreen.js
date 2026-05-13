@@ -12,10 +12,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 export default function FaltasScreen({ navigation }) {
-  // Estado para alternar entre as abas 'Adicionar' e 'Visualizar'
+  
   const [abaAtiva, setAbaAtiva] = useState('Adicionar');
 
-  // --- DADOS DA ABA: ADICIONAR ---
+  
   const [disciplinas, setDisciplinas] = useState([
     { id: '1', nome: 'xxxxxxxxxxxxxxx', faltas: 0 },
     { id: '2', nome: 'xxxxxxxxxxxxxxx', faltas: 0 },
@@ -38,8 +38,7 @@ export default function FaltasScreen({ navigation }) {
     Alert.alert("Sucesso", "Faltas salvas com sucesso!");
   };
 
-  // --- DADOS DA ABA: VISUALIZAR ---
-  // Linhas da tabela de visualização
+  
   const tableRows = [
     { id: '1', codigo: '1', disciplina: 'xxxxxxxxxxxxxxxxxxx', faltas: '0/n' },
     { id: '2', codigo: '', disciplina: '', faltas: '' },
@@ -50,7 +49,7 @@ export default function FaltasScreen({ navigation }) {
     { id: '7', codigo: '', disciplina: '', faltas: '' },
   ];
 
-  // Legenda de códigos (igual à tela de disciplinas)
+  
   const codigosExemplo = [
     { id: '1', texto: '1 - xxxxxxxxxxxxxxx' },
     { id: '2', texto: '2 - xxxxxxxxxxxxxxx' },
@@ -196,7 +195,7 @@ export default function FaltasScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 

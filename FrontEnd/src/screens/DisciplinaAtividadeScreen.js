@@ -13,19 +13,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
-  // --- Estado para alternar entre as abas ---
+  
   const [abaAtiva, setAbaAtiva] = useState('Disciplinas');
   
-  // --- Estados do Formulário de Disciplinas ---
+  
   const [codigo, setCodigo] = useState('');
   const [nome, setNome] = useState('');
 
-  // --- Estados do Formulário de Atividades ---
+  
   const [nomeAtividade, setNomeAtividade] = useState('');
   const [dataEntrega, setDataEntrega] = useState('');
   const [disciplinaVinculada, setDisciplinaVinculada] = useState('');
 
-  // --- Funções dos botões ---
+  
   const handleSalvar = () => {
     if (abaAtiva === 'Disciplinas') {
       Alert.alert("Sucesso", "Disciplina adicionada com sucesso!");
@@ -43,7 +43,7 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
     Alert.alert("Atenção", `Os itens selecionados de ${abaAtiva} foram excluídos.`);
   };
 
-  // --- Listas de Exemplo (Apenas Visual) ---
+  
   const disciplinasExemplo = [
     { id: '1', texto: '1 - xxxxxxxxxxxxxxx' },
     { id: '2', texto: '2 - xxxxxxxxxxxxxxx' },
@@ -224,7 +224,7 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 25 },
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   toggleText: { fontSize: 15, fontWeight: 'bold', color: '#1C2E4A' },
   toggleTextActive: { color: '#1C2E4A' },
 
-  // --- Cartões de Formulário ---
+  
   formCard: {
     backgroundColor: '#A5C0DF', width: '100%', borderRadius: 20, padding: 25, marginBottom: 15,
     elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2,
   },
 
-  // --- Botões Salvar e Excluir ---
+  
   actionRow: { width: '100%', alignItems: 'center', marginBottom: 20 },
   btnSalvar: {
     backgroundColor: '#1B3668', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 20,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   btnExcluirText: { color: '#1C2E4A', fontWeight: 'bold', fontSize: 14 },
 
-  // --- Lista de Disciplinas ---
+  
   listCardDisciplinas: {
     backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, padding: 20, marginBottom: 15,
     elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   listItemText: { fontSize: 11, color: '#1C2E4A', fontWeight: 'bold' },
 
-  // --- Lista de Atividades ---
+  
   listCardAtividades: {
     backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, paddingVertical: 15, paddingHorizontal: 15, marginBottom: 15,
     elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },

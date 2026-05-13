@@ -16,7 +16,7 @@ import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 export default function MontarCronogramaScreen({ navigation }) {
   
-  // Estado para controlar as linhas da tabela
+  
   const [tableRows, setTableRows] = useState([
     { time: '08h - 10h', seg: '', ter: '1', qua: '', qui: '1', sex: '' },
     { time: '', seg: '', ter: '', qua: '', qui: '', sex: '' },
@@ -28,14 +28,14 @@ export default function MontarCronogramaScreen({ navigation }) {
     { time: '', seg: '', ter: '', qua: '', qui: '', sex: '' },
   ]);
 
-  // Função para atualizar os inputs
+  
   const handleInputChange = (text, rowIndex, field) => {
     const updatedRows = [...tableRows];
     updatedRows[rowIndex][field] = text;
     setTableRows(updatedRows);
   };
 
-  // Funções dos botões
+  
   const handleSalvar = () => Alert.alert("Sucesso", "Seu cronograma foi salvo no teste!");
   const handleEsvaziar = () => {
     const linhasLimpas = tableRows.map(row => ({
@@ -159,11 +159,11 @@ export default function MontarCronogramaScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   
-  // --- ALTERAÇÃO AQUI: paddingTop aumentado de 10 para 35 para descer o cabeçalho ---
+  
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
   
   iconButton: { padding: 5 },

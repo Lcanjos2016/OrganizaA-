@@ -24,10 +24,10 @@ export default function PreferenciaScreen({ navigation }) {
       const dados = { avatar, curso, disciplina, atividades };
       await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
       
-      // Feedback opcional para o usuário
+      
       console.log('Dados salvos:', dados);
       
-      // Navega para a Home após salvar
+     
       navigation.navigate('Home');
     } catch (error) {
       Alert.alert("Erro", "Não foi possível salvar suas preferências.");
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
     elevation: 2, 
     textAlign: 'center', 
-    color: '#1a237e', // Cor do texto digitado (Azul escuro para contraste no fundo branco)
+    color: '#1a237e', 
     fontSize: 16
   },
   buttonRow: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    marginTop: 30, // Aumentado para não ficar colado no card azul
+    marginTop: 30, 
     marginBottom: 20 
   },
   footerBtn: { 
