@@ -9,7 +9,10 @@ import MontarCronogramaScreen from '../screens/MontarCronogramaScreen';
 import DisciplinaAtividadeScreen from '../screens/DisciplinaAtividadeScreen';
 import FaltasScreen from '../screens/FaltasScreen';
 import NotasScreen from '../screens/NotasScreen';
-
+import ProgressoScreen from '../screens/ProgressoScreen';
+import NotificacaoScreen from '../screens/NotificacaoScreen';
+import ChatBotScreen from '../screens/ChatBotScreen';
+import SituacaoNotasScreen from '../screens/NotasScreen';
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -18,6 +21,9 @@ export default function AppNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Preferencias" component={PreferenciaScreen}  />
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Progresso" component ={ProgressoScreen} />
+      <Stack.Screen name="Notificacoes" component ={NotificacaoScreen} />
+      <Stack.Screen name="ChatBot" component ={ChatBotScreen} />
       <Stack.Screen name="Cadastro" component={CadastroScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} options={{ headerShown: false}} />
       <Stack.Screen name="Cronograma" component={MontarCronogramaScreen} options={{ headerShown: false }} /> 
