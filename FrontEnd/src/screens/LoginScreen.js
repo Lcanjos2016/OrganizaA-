@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     resizeMode: 'contain',
-    // Sombra para destacar a logo
+    
     shadowColor: '#000',
     shadowOpacity: 0.4,
     shadowRadius: 5,

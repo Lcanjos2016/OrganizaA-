@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: { flexGrow: 1, paddingBottom: 40, alignItems: 'center' },
 
-  // --- Toggle (Abas) ---
+  
   toggleContainer: {
     flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 30, borderWidth: 1, borderColor: '#A5C0DF',
     width: '90%', height: 50, marginBottom: 30, elevation: 3, shadowColor: '#000',

@@ -15,18 +15,18 @@ import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 export default function EditarPerfilScreen({ navigation }) {
   
-  // Estado para armazenar o nome/apelido digitado
+  
   const [nome, setNome] = useState('');
 
-  // Função para simular o salvamento
+  
   const handleSalvar = () => {
     Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-    // navigation.goBack(); // Descomente se quiser que volte à tela anterior após salvar
+    navigation.goBack(); 
   };
 
   return (
     <LinearGradient 
-      // Cores simulando o gradiente da imagem: azul escuro nas pontas, claro no meio
+      
       colors={['#4A69BD', '#EBF3FA', '#4A69BD']} 
       style={styles.mainGradient}
     >
@@ -87,7 +87,7 @@ export default function EditarPerfilScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   mainGradient: { 
     flex: 1 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1 
   },
   
-  // --- Cabeçalho ---
+  
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -122,10 +122,10 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 30,
-    justifyContent: 'center', // Centraliza os elementos verticalmente
+    justifyContent: 'center', 
   },
 
-  // --- Avatar ---
+  
   avatarSection: {
     alignItems: 'center',
     marginBottom: 40,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     color: '#1C2E4A',
   },
 
-  // --- Input ---
+  
   inputSection: {
     width: '100%',
     marginBottom: 60,
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
   },
 
-  // --- Botão Salvar ---
+  
   footerSection: {
     alignItems: 'center',
     marginBottom: 50,

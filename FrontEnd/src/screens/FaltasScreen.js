@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 
-  // --- Toggle (Abas) ---
+  
   toggleContainer: {
     flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 30, borderWidth: 1, borderColor: '#A5C0DF',
     width: '90%', height: 50, marginBottom: 40, elevation: 5, shadowColor: '#000',
@@ -247,9 +247,7 @@ const styles = StyleSheet.create({
   toggleText: { fontSize: 15, fontWeight: 'bold', color: '#1C2E4A' },
   toggleTextActive: { color: '#1C2E4A' },
 
-  // ==========================================
-  // ESTILOS DA ABA: ADICIONAR
-  // ==========================================
+  
   listContainer: { width: '100%', paddingHorizontal: 10 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1.5, borderBottomColor: '#2B4C9B', marginBottom: 10 },
   subjectText: { fontSize: 14, fontWeight: 'bold', color: '#1C2E4A', flex: 1 },
@@ -263,9 +261,7 @@ const styles = StyleSheet.create({
   btnSalvar: { backgroundColor: '#1B3668', paddingVertical: 12, paddingHorizontal: 50, borderRadius: 15, marginTop: 60, elevation: 5 },
   btnSalvarText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
 
-  // ==========================================
-  // ESTILOS DA ABA: VISUALIZAR
-  // ==========================================
+  
   tableContainer: {
     backgroundColor: '#FFF', width: '100%', borderRadius: 15, overflow: 'hidden', marginBottom: 25,
     elevation: 4, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }

@@ -13,18 +13,18 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function IAScreen({ navigation }) {
   
-  // Estado para o interruptor (Switch) - ligado ou desligado
+  
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const handleSalvar = () => {
     Alert.alert("Sucesso", "Configurações da Inteligência Artificial salvas!");
-    navigation.goBack(); // Volta para a tela de configurações após salvar
+    navigation.goBack(); 
   };
 
   return (
     <LinearGradient 
-      // Gradiente escuro nas pontas e claro no centro
+      
       colors={['#4A69BD', '#EBF3FA', '#4A69BD']} 
       style={styles.mainGradient}
     >
@@ -75,7 +75,7 @@ export default function IAScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   mainGradient: { 
     flex: 1 
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1 
   },
   
-  // --- Cabeçalho ---
+  
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     padding: 5 
   },
 
-  // --- Conteúdo ---
+  
   content: {
     flex: 1,
     paddingHorizontal: 35,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  // --- Rodapé / Botão ---
+  
   footer: {
     alignItems: 'center',
     paddingBottom: 80,

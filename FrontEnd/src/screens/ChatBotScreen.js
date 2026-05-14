@@ -14,17 +14,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ChatBotScreen({ navigation }) {
-  // --- Estado para controlar se o menu flutuante está visível ou não ---
+  
   const [menuVisivel, setMenuVisivel] = useState(false);
 
-  // --- Funções temporárias para os botões ---
+  
   const handleCarregarDocumento = () => {
-    setMenuVisivel(false); // Esconde o menu após clicar
+    setMenuVisivel(false); 
     Alert.alert("Documento", "Aqui abrirá a pasta do celular para escolher um PDF ou DOC.");
   };
 
   const handleCarregarFoto = () => {
-    setMenuVisivel(false); // Esconde o menu após clicar
+    setMenuVisivel(false); 
     Alert.alert("Foto", "Aqui abrirá a galeria do celular para escolher uma imagem.");
   };
 
@@ -106,12 +106,12 @@ export default function ChatBotScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   mainGradient: { flex: 1 },
   container: { flex: 1 },
   
-  // --- Cabeçalho ---
+  
   header: { 
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
     paddingHorizontal: 20, paddingTop: 40, paddingBottom: 20 
@@ -125,12 +125,12 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1C2E4A' },
   iconButton: { padding: 5 },
 
-  // --- Barra de Entrada ---
+  
   keyboardWrapper: { 
-    width: '100%', paddingHorizontal: 20, marginTop: 10, zIndex: 10 // zIndex alto para o menu sobrepor o resto
+    width: '100%', paddingHorizontal: 20, marginTop: 10, zIndex: 10 
   },
   inputWrapper: {
-    position: 'relative', // Importante para o menu flutuante saber onde se ancorar
+    position: 'relative', 
   },
   inputContainer: { 
     flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', 
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontSize: 15, color: '#333', height: '100%' },
   iconMic: { paddingLeft: 10, paddingVertical: 5 },
 
-  // --- Menu Flutuante ---
+  
   floatingMenu: {
     position: 'absolute',
-    top: 55, // Fica logo abaixo da barra de pesquisa (que tem 50 de altura)
+    top: 55, 
     left: 0,
-    backgroundColor: '#8BAEE0', // Azul claro baseado no print
+    backgroundColor: '#8BAEE0', 
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -169,5 +169,5 @@ const styles = StyleSheet.create({
     color: '#1C2E4A'
   },
 
-  chatArea: { flex: 1, zIndex: 1 } // zIndex menor para ficar "atrás" do menu flutuante
+  chatArea: { flex: 1, zIndex: 1 } 
 });

@@ -12,7 +12,7 @@ import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 export default function NotificacoesScreen({ navigation }) {
   
-  // Estado com a lista de notificações
+  
   const [notificacoes, setNotificacoes] = useState([
     { 
       id: '1', 
@@ -37,12 +37,12 @@ export default function NotificacoesScreen({ navigation }) {
     },
   ]);
 
-  // Função para remover uma notificação quando clica no botão vermelho
+  
   const removerNotificacao = (id) => {
     setNotificacoes(notificacoes.filter(notificacao => notificacao.id !== id));
   };
 
-  // Função para renderizar o ícone correto dependendo do tipo da notificação
+  
   const renderIcone = (tipo) => {
     if (tipo === 'lembrete') {
       return <Feather name="clock" size={20} color="#1C2E4A" />;
@@ -140,7 +140,7 @@ export default function NotificacoesScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
 
   emptyText: { textAlign: 'center', color: '#FFF', fontSize: 16, marginTop: 40, fontWeight: 'bold' },
 
-  // --- Cartões de Notificação ---
+  
   card: {
     backgroundColor: '#FFF',
     borderRadius: 15,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  // --- Menu Inferior ---
+  
   bottomNav: { 
     position: 'absolute', bottom: 0, width: '100%',
     flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', 

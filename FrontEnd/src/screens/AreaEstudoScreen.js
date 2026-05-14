@@ -15,7 +15,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function AreaEstudoScreen({ navigation }) {
   
-  // --- Funções de Navegação do Menu Central ---
+  
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
   const irParaDisciplinas = () => navigation.navigate('Disciplinas');
@@ -129,7 +129,7 @@ export default function AreaEstudoScreen({ navigation }) {
   );
 }
 
-// --- Estilos ---
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   menuButtonText: { color: '#1E3A8A', fontSize: 16, fontWeight: 'bold' },
   keyboardWrapper: { width: '100%', marginTop: 'auto', marginBottom: 35 },
   
-  // O container do input agora age como um botão
+  
   chatInputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#8DA4C4', borderRadius: 30, padding: 6, backgroundColor: 'rgba(255, 255, 255, 0.4)' },
   chatAvatar: { width: 44, height: 44, backgroundColor: '#A5C0DF', borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
   input: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' },
