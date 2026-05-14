@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
-export default function ConfiguracaoScreen({ navigation }) {
+export default function ConfiguracoesScreen({ navigation }) {
   
   return (
     <SafeAreaView style={styles.container}>
@@ -42,11 +42,15 @@ export default function ConfiguracaoScreen({ navigation }) {
               </View>
               
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>Escolhe nome</Text>
+                <Text style={styles.profileName}>Escolher nome</Text>
                 <Text style={styles.profileEmail}>xxxxxxxx@gmail.com</Text>
               </View>
               
-              <TouchableOpacity style={styles.btnEditar}>
+              {/* Botão Editar -> Vai para EditarPerfil */}
+              <TouchableOpacity 
+                style={styles.btnEditar} 
+                onPress={() => navigation.navigate('EditarPerfil')}
+              >
                 <Text style={styles.btnEditarText}>Editar</Text>
               </TouchableOpacity>
 
@@ -69,8 +73,11 @@ export default function ConfiguracaoScreen({ navigation }) {
           {/* --- Lista de Opções --- */}
           <View style={styles.listCard}>
             
-            {/* Notificações */}
-            <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('Notificacoes')}>
+            {/* Opção Notificações -> Vai para a tela de Notificações */}
+            <TouchableOpacity 
+              style={styles.listItem} 
+              onPress={() => navigation.navigate('Receber')}
+            >
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="bell-cog-outline" size={24} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Notificações</Text>
@@ -91,8 +98,11 @@ export default function ConfiguracaoScreen({ navigation }) {
 
             <View style={styles.divider} />
 
-            {/* Ativar/Desativar IA */}
-            <TouchableOpacity style={styles.listItem}>
+            {/* --- ALTERAÇÃO AQUI: Ativar/Desativar IA -> Vai para ConfigIA --- */}
+            <TouchableOpacity 
+              style={styles.listItem}
+              onPress={() => navigation.navigate('IA')}
+            >
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="robot-outline" size={24} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Ativar/Desativar IA</Text>
@@ -118,120 +128,56 @@ export default function ConfiguracaoScreen({ navigation }) {
 
       {/* --- Menu de Navegação Inferior --- */}
       <View style={styles.bottomNav}>
-        
-        {/* 1. Engrenagem (Ativa: Azul Escuro) */}
-        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Configuracoes')}>
           <Feather name="settings" size={26} color="#1E3A8A" />
         </TouchableOpacity>
         
-        {/* 2. Livros (Disciplinas/Materiais) */}
         <TouchableOpacity>
           <MaterialCommunityIcons name="book-multiple-outline" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         
-        {/* 3. Casinha (Voltar para Área de Estudos) */}
         <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
           <Feather name="home" size={28} color="#6A7A8C" />
         </TouchableOpacity>
         
-        {/* 4. Chapéu de Formatura (Ir para Progresso) */}
         <TouchableOpacity onPress={() => navigation.navigate('Progresso')}>
           <MaterialCommunityIcons name="school-outline" size={30} color="#6A7A8C" />
         </TouchableOpacity>
         
-        {/* 5. Sino de Notificações */}
-        <TouchableOpacity onPress={() => navigation.navigate('Notificacao')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
           <Feather name="bell" size={26} color="#6A7A8C" />
         </TouchableOpacity>
-
       </View>
 
     </SafeAreaView>
   );
 }
 
-// --- Estilos ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
-  
   mainGradient: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingBottom: 100 },
-
-  // --- Cabeçalho ---
-  header: { 
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
-    paddingHorizontal: 25, paddingTop: 50, paddingBottom: 25 
-  },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 50, paddingBottom: 25 },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1C2E4A', marginLeft: 10 },
   iconButton: { padding: 5 },
-
-  // --- Cartões Base (Fundo Translúcido) ---
-  card: {
-    backgroundColor: 'rgba(165, 192, 223, 0.6)', 
-    marginHorizontal: 20,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-
-  // --- Perfil ---
+  card: { backgroundColor: 'rgba(165, 192, 223, 0.6)', marginHorizontal: 20, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
   profileRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  avatarContainer: {
-    width: 60, height: 60, borderRadius: 30, backgroundColor: '#BDC3C7',
-    justifyContent: 'center', alignItems: 'center', marginRight: 15
-  },
+  avatarContainer: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#BDC3C7', justifyContent: 'center', alignItems: 'center', marginRight: 15 },
   profileInfo: { flex: 1 },
   profileName: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A' },
   profileEmail: { fontSize: 12, color: '#4A5B6D', marginTop: 2 },
-  btnEditar: {
-    backgroundColor: '#FFF', paddingVertical: 6, paddingHorizontal: 15, borderRadius: 15,
-    elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }
-  },
+  btnEditar: { backgroundColor: '#FFF', paddingVertical: 6, paddingHorizontal: 15, borderRadius: 15, elevation: 3 },
   btnEditarText: { color: '#1C2E4A', fontWeight: 'bold', fontSize: 13 },
-
-  // --- Instituição ---
   instRow: { flexDirection: 'row', alignItems: 'center' },
   instText: { flex: 1, fontSize: 16, fontWeight: 'bold', color: '#1C2E4A', marginLeft: 15 },
-  dropdownBtn: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#8BAEE0',
-    paddingVertical: 6, paddingHorizontal: 12, borderRadius: 15
-  },
+  dropdownBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#8BAEE0', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 15 },
   dropdownText: { fontSize: 14, fontWeight: 'bold', color: '#1C2E4A', marginRight: 5 },
-
-  // --- Lista de Opções ---
-  listCard: {
-    backgroundColor: 'rgba(165, 192, 223, 0.6)',
-    marginHorizontal: 20,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 30,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  listItem: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15
-  },
+  listCard: { backgroundColor: 'rgba(165, 192, 223, 0.6)', marginHorizontal: 20, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 20, marginBottom: 30, elevation: 2 },
+  listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15 },
   listItemLeft: { flexDirection: 'row', alignItems: 'center' },
   listItemText: { fontSize: 16, fontWeight: 'bold', color: '#4A5B6D', marginLeft: 15 },
   versionText: { fontSize: 12, fontWeight: 'bold', color: '#6A7A8C' },
   divider: { height: 1, backgroundColor: '#8DA4C4', opacity: 0.5 },
-
-  // --- Menu de Navegação Inferior ---
-  bottomNav: { 
-    position: 'absolute', bottom: 0, width: '100%',
-    flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', 
-    paddingTop: 15, paddingBottom: 35, backgroundColor: '#FFF',
-    borderTopWidth: 1, borderTopColor: '#EEE',
-    elevation: 20, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: -3 }
-  }
+  bottomNav: { position: 'absolute', bottom: 0, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingTop: 15, paddingBottom: 35, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: '#EEE', elevation: 20 }
 });

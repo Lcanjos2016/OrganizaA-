@@ -6,7 +6,6 @@ import {
   StyleSheet, 
   SafeAreaView, 
   ScrollView,
-  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
@@ -109,26 +108,32 @@ export default function NotificacoesScreen({ navigation }) {
 
       {/* --- Menu de Navegação Inferior --- */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity>
+        
+        {/* 1. Engrenagem (Configurações) */}
+        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
           <Feather name="settings" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         
+        {/* 2. Livros (Disciplinas/Materiais) */}
         <TouchableOpacity>
-          <MaterialCommunityIcons name="devices" size={26} color="#6A7A8C" />
+          <MaterialCommunityIcons name="book-multiple-outline" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         
+        {/* 3. Casinha (Voltar para Área de Estudos) */}
         <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
           <Feather name="home" size={28} color="#6A7A8C" />
         </TouchableOpacity>
         
+        {/* 4. Beca de Formatura (Ir para Progresso) */}
         <TouchableOpacity onPress={() => navigation.navigate('Progresso')}>
           <MaterialCommunityIcons name="school-outline" size={30} color="#6A7A8C" />
         </TouchableOpacity>
         
-        {/* Sino de Notificações (Ativo: Azul Escuro) */}
+        {/* 5. Sino de Notificações (Ativo: Azul Escuro) */}
         <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
           <Feather name="bell" size={26} color="#1E3A8A" />
         </TouchableOpacity>
+
       </View>
 
     </SafeAreaView>

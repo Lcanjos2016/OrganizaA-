@@ -80,7 +80,7 @@ export default function ProgressoScreen({ navigation }) {
       <View style={styles.bottomNav}>
         
         {/* 1. Engrenagem (Configurações) */}
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
           <Feather name="settings" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         
