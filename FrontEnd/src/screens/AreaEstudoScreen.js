@@ -20,7 +20,7 @@ export default function AreaEstudoScreen({ navigation }) {
   const irParaCronograma = () => navigation.navigate('Cronograma');
   const irParaDisciplinas = () => navigation.navigate('Disciplinas');
   const irParaFaltas = () => navigation.navigate('Faltas');
-  const irParaNotas = () => navigation.navigate('SituacaoNotas');
+  const irParaNotas = () => navigation.navigate('Notas');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,8 +98,8 @@ export default function AreaEstudoScreen({ navigation }) {
       {/* --- Menu de Navegação Inferior --- */}
       <View style={styles.bottomNav}>
         
-        {/* 1. Engrenagem (Configurações) */}
-        <TouchableOpacity>
+        {/* 1. Engrenagem (Vai para Configurações) */}
+        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
           <Feather name="settings" size={26} color="#6A7A8C" />
         </TouchableOpacity>
         
@@ -109,7 +109,7 @@ export default function AreaEstudoScreen({ navigation }) {
         </TouchableOpacity>
         
         {/* 3. Casinha (Ativa: Azul Escuro) */}
-        <TouchableOpacity onPress={() => navigation.navigate('Área de Estudos')}>
+        <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
           <Feather name="home" size={28} color="#1E3A8A" />
         </TouchableOpacity>
         
