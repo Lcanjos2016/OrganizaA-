@@ -128,7 +128,7 @@ export default function ConfiguracoesScreen({ navigation }) {
 
       {/* --- Menu de Navegação Inferior --- */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => navigation.navigate('Configuracoes')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
           <Feather name="settings" size={26} color="#1E3A8A" />
         </TouchableOpacity>
         
