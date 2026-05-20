@@ -34,7 +34,7 @@ export default function AppNavigator() {
       <Stack.Screen name="Configuracao" component ={ConfiguracaoScreen} options={{ headerShown : false}} />
       <Stack.Screen name="EditarPerfil" component ={EditarPerfilScreen} options={{ headerShown : false}} /> 
       <Stack.Screen name="Receber" component ={ReceberScreen} options={{ headerShown : false}} />
-      <Stack.Screen name="IA" component ={IAScreen} />
+      <Stack.Screen name="IA" component ={IAScreen}  />
       <Stack.Screen name="Cadastro" component={CadastroScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} options={{ headerShown: false}} />
       <Stack.Screen name="Cronograma" component={MontarCronogramaScreen} options={{ headerShown: false }} /> 
