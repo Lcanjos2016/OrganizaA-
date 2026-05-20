@@ -17,6 +17,7 @@ import ConfiguracaoScreen from '../screens/ConfiguracaoScreen';
 import EditarPerfilScreen from '../screens/EditarPerfilScreen';
 import ReceberScreen from '../screens/ReceberScreen';
 import IAScreen from'../screens/IAScreen';
+import PreferenciaConfig from '../screens/PreferenciaConfigScreen';
 
 const Stack = createStackNavigator();
 
@@ -24,14 +25,15 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Preferencias" component={PreferenciaScreen}  />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Progresso" component ={ProgressoScreen} />
-      <Stack.Screen name="Notificacoes" component ={NotificacaoScreen} />
-      <Stack.Screen name="ChatBot" component ={ChatBotScreen} />
-      <Stack.Screen name="Configuracao" component ={ConfiguracaoScreen} />
-      <Stack.Screen name="EditarPerfil" component ={EditarPerfilScreen} /> 
-      <Stack.Screen name="Receber" component ={ReceberScreen} />
+      <Stack.Screen name="Preferencias" component={PreferenciaScreen} options={{ headerShown: false}} />
+      <Stack.Screen name="PreferenciaConfig" component={PreferenciaConfig} options={{ headerShown : false}} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{headerShown : false}} />
+      <Stack.Screen name="Progresso" component ={ProgressoScreen} options={{ headerShown : false}} />
+      <Stack.Screen name="Notificacoes" component ={NotificacaoScreen} options={{ headerShown : false}} />
+      <Stack.Screen name="ChatBot" component ={ChatBotScreen} options={{ headerShown : false}} />
+      <Stack.Screen name="Configuracao" component ={ConfiguracaoScreen} options={{ headerShown : false}} />
+      <Stack.Screen name="EditarPerfil" component ={EditarPerfilScreen} options={{ headerShown : false}} /> 
+      <Stack.Screen name="Receber" component ={ReceberScreen} options={{ headerShown : false}} />
       <Stack.Screen name="IA" component ={IAScreen} />
       <Stack.Screen name="Cadastro" component={CadastroScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="AreaEstudo"  component={AreaEstudoScreen} options={{ headerShown: false}} />

@@ -77,6 +77,7 @@ export default function ConfiguracoesScreen({ navigation }) {
             <TouchableOpacity 
               style={styles.listItem} 
               onPress={() => navigation.navigate('Receber')}
+              activeOpacity={0.7}
             >
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="bell-cog-outline" size={24} color="#1C2E4A" />
@@ -87,8 +88,12 @@ export default function ConfiguracoesScreen({ navigation }) {
             
             <View style={styles.divider} />
 
-            {/* Preferências */}
-            <TouchableOpacity style={styles.listItem}>
+            {/* --- INTERAÇÃO DO BOTÃO PREFERÊNCIAS --- */}
+            <TouchableOpacity 
+              style={styles.listItem}
+              onPress={() => navigation.navigate('PreferenciaConfig')}
+              activeOpacity={0.7}
+            >
               <View style={styles.listItemLeft}>
                 <Feather name="sliders" size={22} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Preferências</Text>
@@ -98,10 +103,11 @@ export default function ConfiguracoesScreen({ navigation }) {
 
             <View style={styles.divider} />
 
-            {/* --- ALTERAÇÃO AQUI: Ativar/Desativar IA -> Vai para ConfigIA --- */}
+            {/* Opção Ativar/Desativar IA -> Vai para ConfigIA */}
             <TouchableOpacity 
               style={styles.listItem}
               onPress={() => navigation.navigate('IA')}
+              activeOpacity={0.7}
             >
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="robot-outline" size={24} color="#1C2E4A" />
@@ -113,7 +119,7 @@ export default function ConfiguracoesScreen({ navigation }) {
             <View style={styles.divider} />
 
             {/* Sobre */}
-            <TouchableOpacity style={styles.listItem}>
+            <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
               <View style={styles.listItemLeft}>
                 <Ionicons name="information-circle" size={26} color="#000" />
                 <Text style={styles.listItemText}>Sobre</Text>
