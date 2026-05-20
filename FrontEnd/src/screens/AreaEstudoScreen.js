@@ -18,7 +18,7 @@ export default function AreaEstudoScreen({ navigation }) {
   
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
-  const irParaDisciplinas = () => navigation.navigate('Disciplinas');
+  const irParaDisciplinas = () => navigation.navigate('DisciplinaAtividade');
   const irParaFaltas = () => navigation.navigate('Faltas');
   const irParaNotas = () => navigation.navigate('Notas');
 
