@@ -15,7 +15,6 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function AreaEstudoScreen({ navigation }) {
   
-  
   const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
   const irParaDisciplinas = () => navigation.navigate('DisciplinaAtividade');
@@ -95,40 +94,9 @@ export default function AreaEstudoScreen({ navigation }) {
         </KeyboardAvoidingView>
       </LinearGradient>
 
-      {/* --- Menu de Navegação Inferior --- */}
-      <View style={styles.bottomNav}>
-        
-        {/* 1. Engrenagem (Vai para Configurações) */}
-        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
-          <Feather name="settings" size={26} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-        {/* 2. Livros (Disciplinas/Materiais) */}
-        <TouchableOpacity>
-          <MaterialCommunityIcons name="book-multiple-outline" size={26} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-        {/* 3. Casinha (Ativa: Azul Escuro) */}
-        <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
-          <Feather name="home" size={28} color="#1E3A8A" />
-        </TouchableOpacity>
-        
-        {/* 4. Chapéu de Formatura (Inativo: Cinza) -> Vai para Progresso */}
-        <TouchableOpacity onPress={() => navigation.navigate('Progresso')}>
-          <MaterialCommunityIcons name="school-outline" size={30} color="#6A7A8C" />
-        </TouchableOpacity>
-
-        {/* 5. Sino de Notificações (Inativo: Cinza) -> Vai para Notificações */}
-        <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
-          <Feather name="bell" size={26} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-      </View>
-
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
@@ -143,12 +111,9 @@ const styles = StyleSheet.create({
   menuContainer: { width: '100%' },
   menuButton: { backgroundColor: '#A5C0DF', paddingVertical: 16, paddingHorizontal: 20, borderRadius: 15, marginBottom: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 4.5, elevation: 6 },
   menuButtonText: { color: '#1E3A8A', fontSize: 16, fontWeight: 'bold' },
-  keyboardWrapper: { width: '100%', marginTop: 'auto', marginBottom: 35 },
-  
+  keyboardWrapper: { width: '100%', marginTop: 'auto', marginBottom: 20 }, // Margem ajustada para ficar confortável com as abas nativas
   
   chatInputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#8DA4C4', borderRadius: 30, padding: 6, backgroundColor: 'rgba(255, 255, 255, 0.4)' },
   chatAvatar: { width: 44, height: 44, backgroundColor: '#A5C0DF', borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  input: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' },
-  
-  bottomNav: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingTop: 15, paddingBottom: 35, backgroundColor: '#FFF', elevation: 10, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: -3 }, shadowRadius: 5 }
+  input: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' }
 });

@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
@@ -11,147 +11,141 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       const loadData = async () => {
-        const jsonValue = await AsyncStorage.getItem('@user_prefs');
-        if (jsonValue != null) setUserData(JSON.parse(jsonValue));
+        try {
+          const jsonValue = await AsyncStorage.getItem('@user_prefs');
+          if (jsonValue != null) {
+            setUserData(JSON.parse(jsonValue));
+          }
+        } catch (e) {
+          console.log("Erro ao carregar dados:", e);
+        }
       };
       loadData();
     }, [])
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Superior */}
-
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <LinearGradient 
-          colors={['#b3c9ec', '#8ea9e1']} 
-          style={styles.mainCard}
+    // O Gradiente agora cobre a tela inteira por trás de tudo
+    <LinearGradient colors={['#E0EAFC', '#8ea9e1']} style={styles.container}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={true} // Dá aquele efeito elástico nativo ao puxar nas bordas
         >
-          <Text style={styles.greeting}>Olá, Sabrina!</Text>
+          {/* Cabeçalho de boas-vindas */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.greeting}>Olá, Sabrina!</Text>
+            {userData?.curso ? (
+              <Text style={styles.courseSubtitle}>Curso: {userData.curso}</Text>
+            ) : null}
+          </View>
 
           {/* Card de Frequência */}
-          <View style={styles.whiteCard}>
-            <Text style={styles.cardTitle}>Frequência</Text>
-            <View style={styles.chartPlaceholder}>
-              <View style={styles.progressCircle}>
-                <Text style={styles.progressText}>86%</Text>
+          {userData?.atividades?.notas !== false && (
+            <View style={styles.whiteCard}>
+              <Text style={styles.cardTitle}>Frequência</Text>
+              <View style={styles.chartPlaceholder}>
+                <View style={styles.progressCircle}>
+                  <Text style={styles.progressText}>86%</Text>
+                </View>
               </View>
+              <Text style={styles.subText}>Você está com x faltas.</Text>
             </View>
-            <Text style={styles.subText}>Você está com x faltas.</Text>
-          </View>
+          )}
 
           {/* Card de Atividades */}
-          <View style={styles.activityCard}>
+          <View style={styles.whiteCard}>
             <Text style={styles.cardTitleBlue}>Próximas atividades para hoje</Text>
             <View style={styles.activityList}>
-              <Text style={styles.activityItem}>10:00 - Aula {userData?.disciplina || 'xxxxxxxx'}</Text>
-              <Text style={styles.activityItem}>14:00 - Aula xxxxxxxx</Text>
-              <Text style={styles.activityItem}>16:00 - Aula xxxxxxxx</Text>
+              <Text style={styles.activityItem}>
+                ⏰ 10:00 - Aula: {userData?.disciplina || 'Disciplina não informada'}
+              </Text>
+              <Text style={styles.activityItem}>📝 14:00 - Estudo Dirigido</Text>
+              <Text style={styles.activityItem}>💻 16:00 - Grupo de Projeto</Text>
             </View>
           </View>
 
-          {/* Caixa de Mensagem Motivacional (Estilo Pílula) */}
+          {/* Caixa de Mensagem Motivacional do Assistente */}
           <View style={styles.msgBox}>
             <View style={styles.avatarCircle}>
               <MaterialCommunityIcons 
                 name={userData?.avatar === 'book' ? "book-open-variant" : "robot"} 
-                size={30} 
+                size={28} 
                 color="#5D5FEF" 
               />
             </View>
             <Text style={styles.msgText}>Para de faltar cara e estude mais heim!!!</Text>
           </View>
-        </LinearGradient>
-      </ScrollView>
 
-      {/* Barra de Navegação Inferior (Visual) */}
-      <View style={styles.bottomNav}>
-        <Ionicons name="settings-outline" size={24} color="#333" />
-        <Ionicons name="book-outline" size={24} color="#333" />
-        <Ionicons name="home" size={28} color="#1a237e" />
-        <Ionicons name="school-outline" size={24} color="#333" />
-        <Ionicons name="notifications-outline" size={24} color="#333" />
-      </View>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
+  container: { flex: 1 },
+  scrollContent: { 
     paddingHorizontal: 20, 
-    paddingVertical: 15 
+    paddingTop: 20,
+    paddingBottom: 40 // Garante um respiro no final da tela para o último card não sumir atrás da TabBar
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1a237e' },
-  scrollContent: { paddingBottom: 20 },
-  mainCard: {
-    margin: 15,
-    borderRadius: 30,
-    padding: 20,
-    minHeight: 500,
+  headerContainer: {
+    marginBottom: 25,
+    paddingHorizontal: 5
   },
-  greeting: { fontSize: 20, fontWeight: 'bold', color: '#1a237e', marginBottom: 20 },
+  greeting: { fontSize: 26, fontWeight: 'bold', color: '#1a237e' },
+  courseSubtitle: { fontSize: 15, color: '#1a237e', fontWeight: '600', marginTop: 4, opacity: 0.8 },
   whiteCard: { 
     backgroundColor: '#fff', 
-    borderRadius: 20, 
+    borderRadius: 22, 
     padding: 20, 
     alignItems: 'center', 
-    elevation: 4,
+    elevation: 4, 
+    shadowColor: '#000', // Sombra suave para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     marginBottom: 20 
   },
   cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
-  chartPlaceholder: { marginVertical: 10 },
+  chartPlaceholder: { marginVertical: 5 },
   progressCircle: { 
     width: 130, 
     height: 130, 
     borderRadius: 65, 
     borderWidth: 12, 
-    borderColor: '#6b3fa0', // Cor roxa da imagem
-    borderLeftColor: '#ddd', // Para simular o gráfico de pizza
+    borderColor: '#3F5EFB', 
+    borderLeftColor: '#E0EAFC', 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
   progressText: { fontSize: 24, fontWeight: 'bold', color: '#333' },
-  subText: { marginTop: 15, fontSize: 14, color: '#333', fontWeight: '500' },
-  activityCard: { 
-    backgroundColor: '#fff', 
-    borderRadius: 20, 
-    padding: 20, 
-    elevation: 4,
-    marginBottom: 20 
-  },
+  subText: { marginTop: 15, fontSize: 14, color: '#666', fontWeight: '500' },
   cardTitleBlue: { color: '#3f5efb', fontWeight: 'bold', fontSize: 16, marginBottom: 15, textAlign: 'center' },
-  activityList: { alignItems: 'flex-start', paddingLeft: 10 },
-  activityItem: { fontSize: 14, fontWeight: 'bold', color: '#000', marginVertical: 3 },
+  activityList: { width: '100%', paddingHorizontal: 5 },
+  activityItem: { fontSize: 14, fontWeight: '600', color: '#444', marginVertical: 6 },
   msgBox: { 
     flexDirection: 'row', 
-    backgroundColor: 'rgba(255,255,255,0.4)', 
-    padding: 10, 
-    borderRadius: 50, 
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', 
+    padding: 12, 
+    borderRadius: 25, 
     alignItems: 'center', 
     borderWidth: 1, 
-    borderColor: '#1a237e' 
+    borderColor: 'rgba(93, 95, 239, 0.3)',
+    elevation: 2,
+    marginTop: 5
   },
   avatarCircle: { 
-    backgroundColor: '#b3c9ec', 
-    width: 50, 
-    height: 50, 
-    borderRadius: 25, 
+    backgroundColor: '#E0EAFC', 
+    width: 46, 
+    height: 46, 
+    borderRadius: 23, 
     justifyContent: 'center', 
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#5D5FEF'
-  },
-  msgText: { flex: 1, marginLeft: 10, fontWeight: 'bold', color: '#1a237e', fontSize: 13 },
-  bottomNav: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-around', 
     alignItems: 'center', 
-    paddingVertical: 15, 
-    borderTopWidth: 1, 
-    borderTopColor: '#eee' 
-  }
+    borderWidth: 1, 
+    borderColor: '#5D5FEF' 
+  },
+  msgText: { flex: 1, marginLeft: 12, fontWeight: 'bold', color: '#1a237e', fontSize: 13, lineHeight: 18 }
 });

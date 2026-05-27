@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -6,16 +6,15 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   SafeAreaView, 
-  KeyboardAvoidingView, 
-  Platform,
   ScrollView,
   Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MontarCronogramaScreen({ navigation }) {
-  
   
   const [tableRows, setTableRows] = useState([
     { time: '08h - 10h', seg: '', ter: '1', qua: '', qui: '1', sex: '' },
@@ -28,13 +27,32 @@ export default function MontarCronogramaScreen({ navigation }) {
     { time: '', seg: '', ter: '', qua: '', qui: '', sex: '' },
   ]);
 
+  const [disciplinas, setDisciplinas] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const carregarDisciplinas = async () => {
+        try {
+          const dadosSalvos = await AsyncStorage.getItem('@storage_disciplinas');
+          if (dadosSalvos !== null) {
+            setDisciplinas(JSON.parse(dadosSalvos));
+          } else {
+            setDisciplinas([]);
+          }
+        } catch (error) {
+          console.log("Erro ao carregar disciplinas no cronograma:", error);
+        }
+      };
+
+      carregarDisciplinas();
+    }, [])
+  );
   
   const handleInputChange = (text, rowIndex, field) => {
     const updatedRows = [...tableRows];
     updatedRows[rowIndex][field] = text;
     setTableRows(updatedRows);
   };
-
   
   const handleSalvar = () => Alert.alert("Sucesso", "Seu cronograma foi salvo no teste!");
   const handleEsvaziar = () => {
@@ -43,6 +61,10 @@ export default function MontarCronogramaScreen({ navigation }) {
     }));
     setTableRows(linhasLimpas);
   };
+
+  const metade = Math.ceil(disciplinas.length / 2);
+  const colunaEsquerda = disciplinas.slice(0, metade);
+  const colunaDireita = disciplinas.slice(metade);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -118,84 +140,66 @@ export default function MontarCronogramaScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* --- Legenda / Códigos e Disciplinas --- */}
+          {/* --- Legenda Dinâmica / Códigos e Disciplinas --- */}
           <View style={styles.legendContainer}>
             <Text style={styles.legendTitle}>Códigos e disciplinas</Text>
             <View style={styles.separator} />
-            <View style={styles.legendColumns}>
-              <View style={styles.column}>
-                <Text style={styles.legendText}>1 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>2 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>3 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>4 - xxxxxxxxxxxxxxx</Text>
+            
+            {disciplinas.length === 0 ? (
+              <Text style={styles.emptyLegendText}>Nenhuma disciplina cadastrada na outra tela.</Text>
+            ) : (
+              <View style={styles.legendColumns}>
+                <View style={styles.column}>
+                  {colunaEsquerda.map((item) => (
+                    <Text key={item.id} style={styles.legendText} numberOfLines={1}>
+                      {item.codigo} - {item.nome}
+                    </Text>
+                  ))}
+                </View>
+                <View style={styles.column}>
+                  {colunaDireita.map((item) => (
+                    <Text key={item.id} style={styles.legendText} numberOfLines={1}>
+                      {item.codigo} - {item.nome}
+                    </Text>
+                  ))}
+                </View>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.legendText}>5 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>6 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>7 - xxxxxxxxxxxxxxx</Text>
-                <Text style={styles.legendText}>8 - xxxxxxxxxxxxxxx</Text>
-              </View>
-            </View>
+            )}
           </View>
           
           <Text style={styles.helperText}>Utilize os códigos para preencher o cronograma</Text>
           
-          <View style={{ flex: 1, minHeight: 40 }} />
-          
         </ScrollView>
-
-        {/* --- Barra de Pesquisa / Dicas --- */}
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardWrapper}>
-          <View style={styles.chatInputContainer}>
-            <View style={styles.chatAvatar}>
-              <MaterialCommunityIcons name="robot-outline" size={24} color="#2B4C9B" />
-            </View>
-            <TextInput style={styles.chatInputText} placeholder="Peça suas dicas aqui" placeholderTextColor="#798C9C" />
-            <TouchableOpacity><Feather name="mic" size={22} color="#2B4C9B" /></TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
       </LinearGradient>
     </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
-  
-  
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
-  
   iconButton: { padding: 5 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#2B4C9B' },
-  
   mainGradient: { flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, paddingTop: 15, paddingHorizontal: 20 },
-  scrollContent: { flexGrow: 1, paddingBottom: 10 },
-  
+  scrollContent: { flexGrow: 1, paddingBottom: 30 },
   tableContainer: { backgroundColor: '#FFF', borderRadius: 15, overflow: 'hidden', marginBottom: 20, elevation: 5, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   tableHeader: { flexDirection: 'row', backgroundColor: '#1C2E4A', paddingVertical: 12 },
   tableHeaderText: { flex: 1, color: '#FFF', fontWeight: 'bold', fontSize: 12, textAlign: 'center' },
   tableRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#A5C0DF' },
   tableCell: { flex: 1, borderRightWidth: 1, borderRightColor: '#A5C0DF', justifyContent: 'center', alignItems: 'center' },
   cellInput: { fontWeight: 'bold', fontSize: 11, color: '#1C2E4A', textAlign: 'center', width: '100%', paddingVertical: 12 },
-  
   actionButtonsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
   actionBtn: { flex: 1, paddingVertical: 10, borderRadius: 20, alignItems: 'center', marginHorizontal: 5, elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 2 } },
   btnSalvar: { backgroundColor: '#1B3668' },
   btnEsvaziar: { backgroundColor: '#5AD6B6' },
   btnEditar: { backgroundColor: '#FFFFFF' },
   actionBtnText: { fontWeight: 'bold', fontSize: 14 },
-  
   legendContainer: { backgroundColor: '#FFF', borderRadius: 15, padding: 15, marginBottom: 10, elevation: 4, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
   legendTitle: { color: '#2B4C9B', fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginBottom: 5 },
   separator: { height: 1, backgroundColor: '#2B4C9B', marginBottom: 10, opacity: 0.5 },
   legendColumns: { flexDirection: 'row', justifyContent: 'space-between' },
-  column: { flex: 1 },
+  column: { flex: 1, paddingHorizontal: 5 },
   legendText: { fontSize: 11, color: '#333', fontWeight: '500', marginBottom: 4 },
-  helperText: { textAlign: 'center', color: '#2B4C9B', fontSize: 12, fontWeight: '500', marginBottom: 10 },
-  
-  keyboardWrapper: { width: '100%', paddingBottom: 35 },
-  chatInputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#8DA4C4', borderRadius: 30, padding: 6, paddingRight: 15, backgroundColor: 'rgba(255, 255, 255, 0.4)' },
-  chatAvatar: { width: 44, height: 44, backgroundColor: '#A5C0DF', borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  chatInputText: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' }
+  emptyLegendText: { fontSize: 12, color: '#999', textAlign: 'center', marginVertical: 10, fontStyle: 'italic' },
+  helperText: { textAlign: 'center', color: '#2B4C9B', fontSize: 12, fontWeight: '500', marginBottom: 10 }
 });

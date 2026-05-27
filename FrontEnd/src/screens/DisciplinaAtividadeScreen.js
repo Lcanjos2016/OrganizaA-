@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -7,31 +7,113 @@ import {
   StyleSheet, 
   SafeAreaView, 
   ScrollView,
-  Alert
+  Alert,
+  Modal,
+  FlatList
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
   
   const [abaAtiva, setAbaAtiva] = useState('Disciplinas');
   
-  
+  // --- Estados dos Formulários ---
   const [codigo, setCodigo] = useState('');
   const [nome, setNome] = useState('');
 
-  
   const [nomeAtividade, setNomeAtividade] = useState('');
   const [dataEntrega, setDataEntrega] = useState('');
   const [disciplinaVinculada, setDisciplinaVinculada] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
-  
+  // --- Estados das Listas Dinâmicas ---
+  const [disciplinas, setDisciplinas] = useState([]);
+  const [atividades, setAtividades] = useState([]);
+
+  // --- Estados de Seleção para Exclusão ---
+  const [disciplinasSelecionadas, setDisciplinasSelecionadas] = useState([]);
+  const [atividadesSelecionadas, setAtividadesSelecionadas] = useState([]);
+
+  // Carregar dados salvos ao iniciar a tela
+  useEffect(() => {
+    const carregarDadosIniciais = async () => {
+      try {
+        const disciplinasSalvas = await AsyncStorage.getItem('@storage_disciplinas');
+        if (disciplinasSalvas !== null) {
+          setDisciplinas(JSON.parse(disciplinasSalvas));
+        }
+
+        const atividadesSalvas = await AsyncStorage.getItem('@storage_atividades');
+        if (atividadesSalvas !== null) {
+          setAtividades(JSON.parse(atividadesSalvas));
+        }
+      } catch (error) {
+        console.log("Erro ao carregar dados iniciais:", error);
+      }
+    };
+    carregarDadosIniciais();
+  }, []);
+
+  // --- Funções de Persistência ---
+  const salvarDisciplinasNoStorage = async (novaLista) => {
+    try {
+      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(novaLista));
+    } catch (error) {
+      console.log("Erro ao salvar disciplinas:", error);
+    }
+  };
+
+  const salvarAtividadesNoStorage = async (novaLista) => {
+    try {
+      await AsyncStorage.setItem('@storage_atividades', JSON.stringify(novaLista));
+    } catch (error) {
+      console.log("Erro ao salvar atividades:", error);
+    }
+  };
+
+  // --- Ações de Salvar ---
   const handleSalvar = () => {
     if (abaAtiva === 'Disciplinas') {
+      if (!codigo.trim() || !nome.trim()) {
+        Alert.alert("Aviso", "Por favor, preencha o código e o nome da disciplina.");
+        return;
+      }
+
+      const novaDisciplina = {
+        id: Math.random().toString(),
+        codigo: codigo.trim().toUpperCase(),
+        nome: nome.trim(),
+        faltas: 0 
+      };
+
+      const listaAtualizada = [...disciplinas, novaDisciplina];
+      setDisciplinas(listaAtualizada);
+      salvarDisciplinasNoStorage(listaAtualizada);
+
       Alert.alert("Sucesso", "Disciplina adicionada com sucesso!");
       setCodigo('');
       setNome('');
     } else {
+      if (!nomeAtividade.trim() || !dataEntrega.trim() || !disciplinaVinculada) {
+        Alert.alert("Aviso", "Por favor, preencha todos os campos da atividade.");
+        return;
+      }
+
+      const novaAtividade = {
+        id: Math.random().toString(),
+        nome: nomeAtividade.trim(),
+        data: dataEntrega.trim(),
+        disciplina: disciplinaVinculada,
+        status: 'pendente', 
+        feita: false
+      };
+
+      const listaAtualizada = [...atividades, novaAtividade];
+      setAtividades(listaAtualizada);
+      salvarAtividadesNoStorage(listaAtualizada);
+
       Alert.alert("Sucesso", "Atividade adicionada com sucesso!");
       setNomeAtividade('');
       setDataEntrega('');
@@ -39,29 +121,96 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
     }
   };
 
-  const handleExcluir = () => {
-    Alert.alert("Atenção", `Os itens selecionados de ${abaAtiva} foram excluídos.`);
+  // --- Alternar Status de Concluído da Atividade ---
+  const toggleConcluirAtividade = (id) => {
+    const listaAtualizada = atividades.map(atividade => {
+      if (atividade.id === id) {
+        const novoStatusFeita = !atividade.feita;
+        return {
+          ...atividade,
+          feita: novoStatusFeita,
+          status: novoStatusFeita ? 'concluida' : 'pendente'
+        };
+      }
+      return atividade;
+    });
+
+    setAtividades(listaAtualizada);
+    salvarAtividadesNoStorage(listaAtualizada);
   };
 
-  
-  const disciplinasExemplo = [
-    { id: '1', texto: '1 - xxxxxxxxxxxxxxx' },
-    { id: '2', texto: '2 - xxxxxxxxxxxxxxx' },
-    { id: '3', texto: '3 - xxxxxxxxxxxxxxx' },
-    { id: '4', texto: '4 - xxxxxxxxxxxxxxx' },
-    { id: '5', texto: '5 - xxxxxxxxxxxxxxx' },
-    { id: '6', texto: '6 - xxxxxxxxxxxxxxx' },
-    { id: '7', texto: '7 - xxxxxxxxxxxxxxx' },
-    { id: '8', texto: '8 - xxxxxxxxxxxxxxx' },
-  ];
+  // --- Gerenciamento de Seleção (Checkbox para Exclusão) ---
+  const toggleSelecioneDisciplina = (id) => {
+    if (disciplinasSelecionadas.includes(id)) {
+      setDisciplinasSelecionadas(disciplinasSelecionadas.filter(item => item !== id));
+    } else {
+      setDisciplinasSelecionadas([...disciplinasSelecionadas, id]);
+    }
+  };
 
-  const atividadesExemplo = [
-    { id: '1', texto: 'Atividade xxxxxxx . Entregar xx/xx/xxxx - Disciplina xxxxxxx' },
-    { id: '2', texto: 'Atividade xxxxxxx . Entregar xx/xx/xxxx - Disciplina xxxxxxx' },
-  ];
+  const toggleSelecioneAtividade = (id) => {
+    if (atividadesSelecionadas.includes(id)) {
+      setAtividadesSelecionadas(atividadesSelecionadas.filter(item => item !== id));
+    } else {
+      setAtividadesSelecionadas([...atividadesSelecionadas, id]);
+    }
+  };
+
+  // --- Ação de Excluir ---
+  const handleExcluir = () => {
+    if (abaAtiva === 'Disciplinas') {
+      if (disciplinasSelecionadas.length === 0) {
+        Alert.alert("Aviso", "Nenhuma disciplina selecionada para excluir.");
+        return;
+      }
+
+      Alert.alert(
+        "Confirmar Exclusão",
+        "Deseja mesmo excluir as disciplinas selecionadas?",
+        [
+          { text: "Cancelar", style: "cancel" },
+          { 
+            text: "Excluir", 
+            style: "destructive",
+            onPress: () => {
+              const listaFiltrada = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
+              setDisciplinas(listaFiltrada);
+              salvarDisciplinasNoStorage(listaFiltrada);
+              setDisciplinasSelecionadas([]); 
+              Alert.alert("Sucesso", "Disciplinas excluídas.");
+            }
+          }
+        ]
+      );
+    } else {
+      if (atividadesSelecionadas.length === 0) {
+        Alert.alert("Aviso", "Nenhuma atividade selecionada para excluir.");
+        return;
+      }
+
+      Alert.alert(
+        "Confirmar Exclusão",
+        "Deseja mesmo excluir as atividades selecionadas?",
+        [
+          { text: "Cancelar", style: "cancel" },
+          { 
+            text: "Excluir", 
+            style: "destructive",
+            onPress: () => {
+              const listaFiltrada = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
+              setAtividades(listaFiltrada);
+              salvarAtividadesNoStorage(listaFiltrada);
+              setAtividadesSelecionadas([]); 
+              Alert.alert("Sucesso", "Atividades excluídas.");
+            }
+          }
+        ]
+      );
+    }
+  };
 
   return (
-    <LinearGradient colors={['#3A5CA8', '#9DBCE0', '#EBF3FA']} style={styles.container}>
+    <LinearGradient colors={['#B3C9EC', '#CBDFFF', '#EBF3FA']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         
         {/* --- Cabeçalho --- */}
@@ -81,30 +230,42 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
         <View style={styles.whiteContainer}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             
-            {/* --- Toggle (Abas: Disciplinas / Atividades) --- */}
+            {/* --- Toggle Estilo Pílula --- */}
             <View style={styles.toggleContainer}>
               <TouchableOpacity 
-                style={[styles.toggleBtn, abaAtiva === 'Disciplinas' && styles.toggleBtnActive]}
+                style={[
+                  styles.toggleBtn, 
+                  abaAtiva === 'Disciplinas' ? styles.toggleBtnActive : styles.toggleBtnInactive
+                ]}
                 onPress={() => setAbaAtiva('Disciplinas')}
+                activeOpacity={0.8}
               >
-                <Text style={[styles.toggleText, abaAtiva === 'Disciplinas' && styles.toggleTextActive]}>
+                <Text style={[
+                  styles.toggleText,
+                  abaAtiva === 'Disciplinas' ? styles.toggleTextActive : styles.toggleTextInactive
+                ]}>
                   Disciplinas
                 </Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={[styles.toggleBtn, abaAtiva === 'Atividades' && styles.toggleBtnActive]}
+                style={[
+                  styles.toggleBtn, 
+                  abaAtiva === 'Atividades' ? styles.toggleBtnActive : styles.toggleBtnInactive
+                ]}
                 onPress={() => setAbaAtiva('Atividades')}
+                activeOpacity={0.8}
               >
-                <Text style={[styles.toggleText, abaAtiva === 'Atividades' && styles.toggleTextActive]}>
+                <Text style={[
+                  styles.toggleText,
+                  abaAtiva === 'Atividades' ? styles.toggleTextActive : styles.toggleTextInactive
+                ]}>
                   Atividades
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* ============================================================== */}
-            {/* CONDIÇÃO: SE A ABA FOR 'DISCIPLINAS', MOSTRA ESSE FORMULÁRIO */}
-            {/* ============================================================== */}
+            {/* --- CONTEÚDO DINÂMICO DA ABA DISCIPLINAS --- */}
             {abaAtiva === 'Disciplinas' ? (
               <>
                 <View style={styles.formCard}>
@@ -113,6 +274,8 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                     style={styles.input}
                     value={codigo}
                     onChangeText={setCodigo}
+                    placeholder="Ex: GCC123"
+                    placeholderTextColor="#A0A0A0"
                   />
                   
                   <Text style={styles.label}>Nome da disciplina:</Text>
@@ -120,56 +283,58 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                     style={styles.input}
                     value={nome}
                     onChangeText={setNome}
+                    placeholder="Ex: Engenharia de Software"
+                    placeholderTextColor="#A0A0A0"
                   />
                 </View>
 
-                {/* Botão Salvar */}
                 <View style={styles.actionRow}>
                   <TouchableOpacity style={styles.btnSalvar} onPress={handleSalvar}>
                     <Text style={styles.btnSalvarText}>Salvar</Text>
                   </TouchableOpacity>
                 </View>
 
-                {/* Lista de Disciplinas */}
+                {/* Lista Dinâmica de Disciplinas */}
                 <View style={styles.listCardDisciplinas}>
-                  <Text style={styles.listTitle}>Códigos e disciplinas adicionados</Text>
+                  <Text style={styles.listTitle}>Codes e disciplinas adicionados</Text>
                   <View style={styles.separator} />
                   
-                  <View style={styles.listColumns}>
-                    <View style={styles.column}>
-                      {disciplinasExemplo.slice(0, 4).map((item) => (
-                        <View key={item.id} style={styles.listItem}>
-                          <Text style={styles.listItemText}>{item.texto}</Text>
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons name="checkbox-blank-outline" size={14} color="#2B4C9B" />
-                          </TouchableOpacity>
-                        </View>
-                      ))}
+                  {disciplinas.length === 0 ? (
+                    <Text style={styles.emptyText}>Nenhuma disciplina cadastrada.</Text>
+                  ) : (
+                    <View style={styles.listGrid}>
+                      {disciplinas.map((item) => {
+                        const isSelecionado = disciplinasSelecionadas.includes(item.id);
+                        return (
+                          <View key={item.id} style={styles.listItem}>
+                            <Text style={styles.listItemText} numberOfLines={1}>
+                              {item.codigo} - {item.nome}
+                            </Text>
+                            <TouchableOpacity onPress={() => toggleSelecioneDisciplina(item.id)}>
+                              <MaterialCommunityIcons 
+                                name={isSelecionado ? "checkbox-marked" : "checkbox-blank-outline"} 
+                                size={18} 
+                                color="#2B4C9B" 
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        );
+                      })}
                     </View>
-                    <View style={styles.column}>
-                      {disciplinasExemplo.slice(4, 8).map((item) => (
-                        <View key={item.id} style={styles.listItem}>
-                          <Text style={styles.listItemText}>{item.texto}</Text>
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons name="checkbox-blank-outline" size={14} color="#2B4C9B" />
-                          </TouchableOpacity>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
+                  )}
                 </View>
               </>
             ) : (
-            /* ============================================================== */
-            /* CONDIÇÃO: SE A ABA FOR 'ATIVIDADES', MOSTRA ESSE FORMULÁRIO    */
-            /* ============================================================== */
               <>
+                {/* --- CONTEÚDO DINÂMICO DA ABA ATIVIDADES --- */}
                 <View style={styles.formCard}>
                   <Text style={styles.label}>Atividade:</Text>
                   <TextInput 
                     style={styles.input}
                     value={nomeAtividade}
                     onChangeText={setNomeAtividade}
+                    placeholder="Ex: Prova 1 ou Checklist"
+                    placeholderTextColor="#A0A0A0"
                   />
                   
                   <Text style={styles.label}>Data de entrega:</Text>
@@ -177,128 +342,188 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                     style={styles.input}
                     value={dataEntrega}
                     onChangeText={setDataEntrega}
+                    placeholder="Ex: DD/MM/AAAA"
+                    placeholderTextColor="#A0A0A0"
                   />
 
                   <Text style={styles.label}>Vinculado a disciplina:</Text>
-                  <TouchableOpacity style={styles.dropdownInput}>
+                  <TouchableOpacity style={styles.dropdownInput} onPress={() => setModalVisible(true)}>
                     <Text style={{ color: disciplinaVinculada ? '#333' : '#A0A0A0' }}>
-                      {disciplinaVinculada || ''}
+                      {disciplinaVinculada || 'Selecione uma disciplina'}
                     </Text>
                     <Feather name="chevron-down" size={20} color="#1C2E4A" />
                   </TouchableOpacity>
                 </View>
 
-                {/* Botão Salvar */}
                 <View style={styles.actionRow}>
                   <TouchableOpacity style={styles.btnSalvar} onPress={handleSalvar}>
                     <Text style={styles.btnSalvarText}>Salvar</Text>
                   </TouchableOpacity>
                 </View>
 
-                {/* Lista de Atividades */}
+                {/* Lista Dinâmica de Atividades com Feedback Explicito de Status */}
                 <View style={styles.listCardAtividades}>
-                  {atividadesExemplo.map((item) => (
-                    <View key={item.id} style={styles.listItemAtividade}>
-                      <Text style={styles.listItemTextAtividade}>{item.texto}</Text>
-                      <TouchableOpacity>
-                        <MaterialCommunityIcons name="checkbox-blank-outline" size={16} color="#2B4C9B" />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
+                  {atividades.length === 0 ? (
+                    <Text style={styles.emptyText}>Nenhuma atividade cadastrada.</Text>
+                  ) : (
+                    atividades.map((item) => {
+                      const isSelecionadoExcluir = atividadesSelecionadas.includes(item.id);
+                      return (
+                        <View 
+                          key={item.id} 
+                          style={[
+                            styles.listItemAtividade, 
+                            item.feita && { backgroundColor: 'rgba(76, 175, 80, 0.15)' } // Fundo levemente verde se concluído
+                          ]}
+                        >
+                          {/* Botão Concluir com Feedback de Toque */}
+                          <TouchableOpacity 
+                            onPress={() => toggleConcluirAtividade(item.id)}
+                            style={styles.btnCheckboxConcluir}
+                            activeOpacity={0.7}
+                          >
+                            <MaterialCommunityIcons 
+                              name={item.feita ? "checkbox-marked-circle" : "checkbox-blank-circle-outline"} 
+                              size={24} 
+                              color={item.feita ? "#4CAF50" : "#2B4C9B"} 
+                            />
+                            <Text style={[
+                              styles.statusBadgeText, 
+                              { color: item.feita ? "#4CAF50" : "#2B4C9B" }
+                            ]}>
+                              {item.feita ? "Concluído" : "Marcar como feito"}
+                            </Text>
+                          </TouchableOpacity>
+
+                          {/* Texto da Atividade */}
+                          <Text style={[
+                            styles.listItemTextAtividade,
+                            item.feita && { textDecorationLine: 'line-through', color: '#777', opacity: 0.7 }
+                          ]}>
+                            {item.nome} . Entregar {item.data} - {item.disciplina}
+                          </Text>
+                          
+                          {/* Checkbox de Seleção para Deleção Direita */}
+                          <TouchableOpacity onPress={() => toggleSelecioneAtividade(item.id)} style={{ paddingLeft: 5 }}>
+                            <MaterialCommunityIcons 
+                              name={isSelecionadoExcluir ? "radiobox-marked" : "radiobox-blank"} 
+                              size={20} 
+                              color="#1C2E4A" 
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })
+                  )}
                 </View>
               </>
             )}
 
-            {/* --- Botão Excluir (Aparece para ambas as abas) --- */}
+            {/* --- Botão Excluir Permanente --- */}
             <View style={styles.actionRow}>
               <TouchableOpacity style={styles.btnExcluir} onPress={handleExcluir}>
-                <Text style={styles.btnExcluirText}>Excluir</Text>
+                <Text style={styles.btnExcluirText}>Excluir Selecionados</Text>
               </TouchableOpacity>
             </View>
 
           </ScrollView>
         </View>
 
+        {/* --- Modal Seletor de Disciplinas Cadastradas --- */}
+        <Modal transparent={true} visible={modalVisible} animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Vincular Disciplina</Text>
+              <FlatList
+                data={disciplinas}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity 
+                    style={styles.modalItem} 
+                    onPress={() => {
+                      setDisciplinaVinculada(item.nome);
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text style={styles.modalItemText}>{item.codigo} - {item.nome}</Text>
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                  <Text style={styles.modalEmptyText}>Cadastre disciplinas primeiro!</Text>
+                }
+              />
+              <TouchableOpacity style={styles.btnFecharModal} onPress={() => setModalVisible(false)}>
+                <Text style={styles.btnFecharModalText}>Fechar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </SafeAreaView>
     </LinearGradient>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 25 },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center' },
+  headerTitle: { fontSize: 16, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center', flex: 1, paddingHorizontal: 10 },
   iconButton: { padding: 5 },
-  
   whiteContainer: {
     flex: 1, backgroundColor: '#FFF', borderTopLeftRadius: 40, borderTopRightRadius: 40,
     paddingTop: 30, paddingHorizontal: 20, elevation: 8, shadowColor: '#000',
-    shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.05, shadowRadius: 5, shadowOffset: { width: 0, height: -3 },
   },
   scrollContent: { flexGrow: 1, paddingBottom: 40, alignItems: 'center' },
-
-  
   toggleContainer: {
-    flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 30, borderWidth: 1, borderColor: '#A5C0DF',
-    width: '90%', height: 50, marginBottom: 30, elevation: 3, shadowColor: '#000',
-    shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 }, overflow: 'hidden'
+    flexDirection: 'row', 
+    backgroundColor: '#FFFFFF', 
+    borderRadius: 30, 
+    padding: 4, 
+    width: '90%', 
+    height: 54, 
+    marginBottom: 30, 
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3, 
   },
-  toggleBtn: { flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 30 },
+  toggleBtn: { flex: 1, height: '100%', borderRadius: 25, justifyContent: 'center', alignItems: 'center' },
   toggleBtnActive: { backgroundColor: '#8BAEE0' },
-  toggleText: { fontSize: 15, fontWeight: 'bold', color: '#1C2E4A' },
-  toggleTextActive: { color: '#1C2E4A' },
-
-  
-  formCard: {
-    backgroundColor: '#A5C0DF', width: '100%', borderRadius: 20, padding: 25, marginBottom: 15,
-    elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
-  },
+  toggleBtnInactive: { backgroundColor: 'transparent' },
+  toggleText: { fontSize: 15, fontWeight: 'bold' },
+  toggleTextActive: { color: '#000000' },
+  toggleTextInactive: { color: '#000000', opacity: 0.7 },
+  formCard: { backgroundColor: '#A5C0DF', width: '100%', borderRadius: 20, padding: 25, marginBottom: 15, elevation: 3 },
   label: { fontSize: 15, fontWeight: 'bold', color: '#1C2E4A', marginBottom: 8 },
-  input: {
-    backgroundColor: '#FFF', borderRadius: 15, height: 45, paddingHorizontal: 15, marginBottom: 20,
-    fontSize: 15, color: '#333', elevation: 2,
-  },
-  dropdownInput: {
-    backgroundColor: '#FFF', borderRadius: 15, height: 45, paddingHorizontal: 15, marginBottom: 5,
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2,
-  },
-
-  
+  input: { backgroundColor: '#FFF', borderRadius: 15, height: 45, paddingHorizontal: 15, marginBottom: 20, fontSize: 15, color: '#333', elevation: 2 },
+  dropdownInput: { backgroundColor: '#FFF', borderRadius: 15, height: 45, paddingHorizontal: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
   actionRow: { width: '100%', alignItems: 'center', marginBottom: 20 },
-  btnSalvar: {
-    backgroundColor: '#1B3668', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 20,
-    elevation: 4, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 4, shadowOffset: { width: 0, height: 2 },
-  },
+  btnSalvar: { backgroundColor: '#1B3668', paddingVertical: 12, paddingHorizontal: 50, borderRadius: 20, elevation: 4 },
   btnSalvarText: { color: '#FFF', fontWeight: 'bold', fontSize: 14 },
-  
-  btnExcluir: {
-    backgroundColor: '#5AD6B6', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 20,
-    elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, shadowOffset: { width: 0, height: 2 },
-  },
+  btnExcluir: { backgroundColor: '#5AD6B6', paddingVertical: 12, paddingHorizontal: 50, borderRadius: 20, elevation: 4 },
   btnExcluirText: { color: '#1C2E4A', fontWeight: 'bold', fontSize: 14 },
-
-  
-  listCardDisciplinas: {
-    backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, padding: 20, marginBottom: 15,
-    elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
-  },
+  listCardDisciplinas: { backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, padding: 20, marginBottom: 15, elevation: 3 },
   listTitle: { fontSize: 14, fontWeight: 'bold', color: '#2B4C9B', textAlign: 'center', marginBottom: 8 },
   separator: { height: 1, backgroundColor: '#2B4C9B', marginBottom: 15, opacity: 0.3 },
-  listColumns: { flexDirection: 'row', justifyContent: 'space-between' },
-  column: { flex: 1, paddingHorizontal: 5 },
-  listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  listItemText: { fontSize: 11, color: '#1C2E4A', fontWeight: 'bold' },
-
-  
-  listCardAtividades: {
-    backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, paddingVertical: 15, paddingHorizontal: 15, marginBottom: 15,
-    elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
-  },
-  listItemAtividade: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5
-  },
-  listItemTextAtividade: {
-    fontSize: 11, color: '#1C2E4A', fontWeight: 'bold', flex: 1, paddingRight: 10
-  }
+  listGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '48%', marginBottom: 12, backgroundColor: 'rgba(255,255,255,0.4)', padding: 8, borderRadius: 10 },
+  listItemText: { fontSize: 11, color: '#1C2E4A', fontWeight: 'bold', flex: 1, marginRight: 4 },
+  listCardAtividades: { backgroundColor: '#B7CFF0', width: '100%', borderRadius: 15, padding: 12, marginBottom: 15, elevation: 3 },
+  listItemAtividade: { flexDirection: 'column', backgroundColor: 'rgba(255,255,255,0.5)', padding: 12, borderRadius: 15, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#2B4C9B' },
+  btnCheckboxConcluir: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  statusBadgeText: { fontSize: 11, fontWeight: 'bold', marginLeft: 6, textTransform: 'uppercase' },
+  listItemTextAtividade: { fontSize: 13, color: '#1C2E4A', fontWeight: 'bold', width: '100%', marginVertical: 4 },
+  emptyText: { color: '#1C2E4A', opacity: 0.6, fontSize: 13, textAlign: 'center', padding: 10 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: '#FFF', width: '85%', borderRadius: 20, padding: 20, maxHeight: '60%' },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A', marginBottom: 15, textAlign: 'center' },
+  modalItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#EEE' },
+  modalItemText: { fontSize: 15, color: '#333' },
+  modalEmptyText: { textAlign: 'center', color: '#999', marginVertical: 20 },
+  btnFecharModal: { backgroundColor: '#1B3668', marginTop: 15, padding: 12, borderRadius: 15, alignItems: 'center' },
+  btnFecharModalText: { color: '#FFF', fontWeight: 'bold' }
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -9,20 +9,37 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ConfiguracoesScreen({ navigation }) {
+  const [userData, setUserData] = useState({ nome: 'Usuário', email: 'seuemail@exemplo.com' });
+
+  // Carrega os dados sempre que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      const carregarDados = async () => {
+        try {
+          const dadosSalvos = await AsyncStorage.getItem('@storage_user_data');
+          if (dadosSalvos) {
+            setUserData(JSON.parse(dadosSalvos));
+          }
+        } catch (e) {
+          console.error("Erro ao carregar dados do usuário", e);
+        }
+      };
+      carregarDados();
+    }, [])
+  );
   
   return (
     <SafeAreaView style={styles.container}>
-      
-      {/* --- Fundo com Gradiente --- */}
       <LinearGradient 
         colors={['#4A69BD', '#9DBCE0', '#EBF3FA', '#FFFFFF']} 
         style={styles.mainGradient}
       >
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
-          {/* --- Cabeçalho --- */}
           <View style={styles.header}>
             <View style={styles.headerTitleContainer}>
               <Feather name="settings" size={28} color="#1C2E4A" />
@@ -33,36 +50,31 @@ export default function ConfiguracoesScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* --- Cartão de Perfil --- */}
           <View style={styles.card}>
             <View style={styles.profileRow}>
-              
               <View style={styles.avatarContainer}>
                 <Ionicons name="person" size={35} color="#6A7A8C" />
               </View>
               
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>Escolher nome</Text>
-                <Text style={styles.profileEmail}>xxxxxxxx@gmail.com</Text>
+                <Text style={styles.profileName}>{userData.nome}</Text>
+                <Text style={styles.profileEmail}>{userData.email}</Text>
               </View>
               
-              {/* Botão Editar -> Vai para EditarPerfil */}
               <TouchableOpacity 
                 style={styles.btnEditar} 
                 onPress={() => navigation.navigate('EditarPerfil')}
               >
                 <Text style={styles.btnEditarText}>Editar</Text>
               </TouchableOpacity>
-
             </View>
           </View>
 
-          {/* --- Cartão de Instituição --- */}
+          {/* ... restante do seu código (Cartão de Instituição e Lista) permanece igual ... */}
           <View style={styles.card}>
             <View style={styles.instRow}>
               <MaterialCommunityIcons name="school-outline" size={26} color="#1C2E4A" />
               <Text style={styles.instText}>Instituição</Text>
-              
               <TouchableOpacity style={styles.dropdownBtn}>
                 <Text style={styles.dropdownText}>UFAM</Text>
                 <Feather name="chevron-down" size={18} color="#1C2E4A" />
@@ -70,15 +82,8 @@ export default function ConfiguracoesScreen({ navigation }) {
             </View>
           </View>
 
-          {/* --- Lista de Opções --- */}
           <View style={styles.listCard}>
-            
-            {/* Opção Notificações -> Vai para a tela de Notificações */}
-            <TouchableOpacity 
-              style={styles.listItem} 
-              onPress={() => navigation.navigate('Receber')}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('Receber')}>
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="bell-cog-outline" size={24} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Notificações</Text>
@@ -88,12 +93,7 @@ export default function ConfiguracoesScreen({ navigation }) {
             
             <View style={styles.divider} />
 
-            {/* --- INTERAÇÃO DO BOTÃO PREFERÊNCIAS --- */}
-            <TouchableOpacity 
-              style={styles.listItem}
-              onPress={() => navigation.navigate('PreferenciaConfig')}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('PreferenciaConfig')}>
               <View style={styles.listItemLeft}>
                 <Feather name="sliders" size={22} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Preferências</Text>
@@ -103,66 +103,26 @@ export default function ConfiguracoesScreen({ navigation }) {
 
             <View style={styles.divider} />
 
-            {/* Opção Ativar/Desativar IA -> Vai para ConfigIA */}
-            <TouchableOpacity 
-              style={styles.listItem}
-              onPress={() => navigation.navigate('IA')}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('IA')}>
               <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons name="robot-outline" size={24} color="#1C2E4A" />
                 <Text style={styles.listItemText}>Ativar/Desativar IA</Text>
               </View>
               <Feather name="chevron-right" size={20} color="#1C2E4A" />
             </TouchableOpacity>
-
-            <View style={styles.divider} />
-
-            {/* Sobre */}
-            <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
-              <View style={styles.listItemLeft}>
-                <Ionicons name="information-circle" size={26} color="#000" />
-                <Text style={styles.listItemText}>Sobre</Text>
-              </View>
-              <Text style={styles.versionText}>Versão 1.0</Text>
-            </TouchableOpacity>
-
           </View>
 
         </ScrollView>
       </LinearGradient>
-
-      {/* --- Menu de Navegação Inferior --- */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => navigation.navigate('Configuracao')}>
-          <Feather name="settings" size={26} color="#1E3A8A" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity>
-          <MaterialCommunityIcons name="book-multiple-outline" size={26} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={() => navigation.navigate('AreaEstudo')}>
-          <Feather name="home" size={28} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={() => navigation.navigate('Progresso')}>
-          <MaterialCommunityIcons name="school-outline" size={30} color="#6A7A8C" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
-          <Feather name="bell" size={26} color="#6A7A8C" />
-        </TouchableOpacity>
-      </View>
-
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  // MANTIVE O SEU ESTILO ORIGINAL INTACTO
   container: { flex: 1, backgroundColor: '#FFF' },
   mainGradient: { flex: 1 },
-  scrollContent: { flexGrow: 1, paddingBottom: 100 },
+  scrollContent: { flexGrow: 1, paddingBottom: 30 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 50, paddingBottom: 25 },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1C2E4A', marginLeft: 10 },
@@ -183,7 +143,5 @@ const styles = StyleSheet.create({
   listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15 },
   listItemLeft: { flexDirection: 'row', alignItems: 'center' },
   listItemText: { fontSize: 16, fontWeight: 'bold', color: '#4A5B6D', marginLeft: 15 },
-  versionText: { fontSize: 12, fontWeight: 'bold', color: '#6A7A8C' },
-  divider: { height: 1, backgroundColor: '#8DA4C4', opacity: 0.5 },
-  bottomNav: { position: 'absolute', bottom: 0, width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingTop: 15, paddingBottom: 35, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: '#EEE', elevation: 20 }
+  divider: { height: 1, backgroundColor: '#8DA4C4', opacity: 0.5 }
 });
