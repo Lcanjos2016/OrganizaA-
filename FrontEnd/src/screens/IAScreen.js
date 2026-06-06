@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { userApi, getApiErrorMessage } from '../services/api';
 
 export default function IAScreen({ navigation }) {
   
@@ -17,9 +18,14 @@ export default function IAScreen({ navigation }) {
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const handleSalvar = () => {
-    Alert.alert("Sucesso", "Configurações da Inteligência Artificial salvas!");
-    navigation.goBack(); 
+  const handleSalvar = async () => {
+    try {
+      await userApi.savePreferences({ iaAtiva: isEnabled });
+      Alert.alert("Sucesso", "Configurações da Inteligência Artificial salvas!");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Erro", getApiErrorMessage(error));
+    }
   };
 
   return (

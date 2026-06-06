@@ -17,6 +17,7 @@ import { useFocusEffect } from '@react-navigation/native'; // Atualizado para o 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { disciplineApi, getApiErrorMessage } from '../services/api';
 
 export default function SituacaoNotasScreen({ navigation }) {
   
@@ -35,10 +36,9 @@ export default function SituacaoNotasScreen({ navigation }) {
 
   const carregarDisciplinas = async () => {
     try {
-      const dadosSalvos = await AsyncStorage.getItem('@storage_disciplinas');
-      if (dadosSalvos !== null) {
-        const listaDisciplinas = JSON.parse(dadosSalvos);
-        setDisciplinas(listaDisciplinas);
+      const listaDisciplinas = await disciplineApi.list();
+      setDisciplinas(listaDisciplinas);
+      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinas));
         
         // Se já houver uma disciplina previamente selecionada, atualiza as notas dela
         if (disciplinaSelecionada) {
@@ -51,11 +51,6 @@ export default function SituacaoNotasScreen({ navigation }) {
         }
         setDisciplinaSelecionada(null);
         setNotas([]);
-      } else {
-        setDisciplinas([]);
-        setDisciplinaSelecionada(null);
-        setNotas([]);
-      }
     } catch (error) {
       console.log("Erro ao carregar dados:", error);
     }
@@ -145,7 +140,13 @@ export default function SituacaoNotasScreen({ navigation }) {
     });
 
     try {
-      // Salva o fluxo normal de disciplinas
+      const [nota1, nota2, nota3] = notasValidas;
+      const retorno = await disciplineApi.saveGrades(disciplinaSelecionada.id, {
+        nota1: nota1 || 0,
+        nota2: nota2 || 0,
+        nota3: nota3 || 0,
+      });
+
       await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinasAtualizada));
       
       // Sincroniza o snapshot plano de notas para o gráfico da tela de Progresso
@@ -154,9 +155,9 @@ export default function SituacaoNotasScreen({ navigation }) {
       setDisciplinas(listaDisciplinasAtualizada);
       const selecionadaAtualizada = listaDisciplinasAtualizada.find(d => d.id === disciplinaSelecionada.id);
       setDisciplinaSelecionada(selecionadaAtualizada);
-      Alert.alert("Sucesso", `Média calculada: ${notaFinalFormatada} (${situacao})`);
+      Alert.alert("Sucesso", `Média calculada: ${retorno.nota_final || notaFinalFormatada} (${retorno.situacao || situacao})`);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar os cálculos.");
+      Alert.alert("Erro", getApiErrorMessage(error));
     }
   };
 
@@ -189,6 +190,11 @@ export default function SituacaoNotasScreen({ navigation }) {
             });
 
             try {
+              await disciplineApi.saveGrades(idDisciplina, {
+                nota1: 0,
+                nota2: 0,
+                nota3: 0,
+              });
               await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinasAtualizada));
               
               // Atualiza também o histórico do progresso removendo esta disciplina limpa

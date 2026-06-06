@@ -14,6 +14,17 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { disciplineApi, activityApi, getApiErrorMessage } from '../services/api';
+
+const normalizarData = (texto) => {
+  const valor = texto.trim();
+  const partes = valor.split('/');
+  if (partes.length === 3) {
+    const [dia, mes, ano] = partes;
+    return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+  }
+  return valor;
+};
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
   
@@ -40,15 +51,14 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
   useEffect(() => {
     const carregarDadosIniciais = async () => {
       try {
-        const disciplinasSalvas = await AsyncStorage.getItem('@storage_disciplinas');
-        if (disciplinasSalvas !== null) {
-          setDisciplinas(JSON.parse(disciplinasSalvas));
-        }
-
-        const atividadesSalvas = await AsyncStorage.getItem('@storage_atividades');
-        if (atividadesSalvas !== null) {
-          setAtividades(JSON.parse(atividadesSalvas));
-        }
+        const [disciplinasApi, atividadesApi] = await Promise.all([
+          disciplineApi.list(),
+          activityApi.list(),
+        ]);
+        setDisciplinas(disciplinasApi);
+        setAtividades(atividadesApi);
+        await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(disciplinasApi));
+        await AsyncStorage.setItem('@storage_atividades', JSON.stringify(atividadesApi));
       } catch (error) {
         console.log("Erro ao carregar dados iniciais:", error);
       }
@@ -74,69 +84,76 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
   };
 
   // --- Ações de Salvar ---
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (abaAtiva === 'Disciplinas') {
       if (!codigo.trim() || !nome.trim()) {
         Alert.alert("Aviso", "Por favor, preencha o código e o nome da disciplina.");
         return;
       }
 
-      const novaDisciplina = {
-        id: Math.random().toString(),
-        codigo: codigo.trim().toUpperCase(),
-        nome: nome.trim(),
-        faltas: 0 
-      };
+      try {
+        const novaDisciplina = await disciplineApi.create({
+          codigoDisciplina: codigo.trim().toUpperCase(),
+          nomeDisciplina: nome.trim(),
+        });
+        const listaAtualizada = [...disciplinas, novaDisciplina];
+        setDisciplinas(listaAtualizada);
+        salvarDisciplinasNoStorage(listaAtualizada);
 
-      const listaAtualizada = [...disciplinas, novaDisciplina];
-      setDisciplinas(listaAtualizada);
-      salvarDisciplinasNoStorage(listaAtualizada);
-
-      Alert.alert("Sucesso", "Disciplina adicionada com sucesso!");
-      setCodigo('');
-      setNome('');
+        Alert.alert("Sucesso", "Disciplina adicionada com sucesso!");
+        setCodigo('');
+        setNome('');
+      } catch (error) {
+        Alert.alert("Erro", getApiErrorMessage(error));
+      }
     } else {
       if (!nomeAtividade.trim() || !dataEntrega.trim() || !disciplinaVinculada) {
         Alert.alert("Aviso", "Por favor, preencha todos os campos da atividade.");
         return;
       }
 
-      const novaAtividade = {
-        id: Math.random().toString(),
-        nome: nomeAtividade.trim(),
-        data: dataEntrega.trim(),
-        disciplina: disciplinaVinculada,
-        status: 'pendente', 
-        feita: false
-      };
+      try {
+        const disciplina = disciplinas.find((item) => item.nome === disciplinaVinculada);
+        const novaAtividade = await activityApi.create({
+          topicoEstudo: nomeAtividade.trim(),
+          dataAtividade: normalizarData(dataEntrega),
+          idDisciplina: disciplina?.idDisciplina,
+          tipoAtividade: 'Entrega',
+          duracaoMinutos: 60,
+        });
+        const listaAtualizada = [...atividades, novaAtividade];
+        setAtividades(listaAtualizada);
+        salvarAtividadesNoStorage(listaAtualizada);
 
-      const listaAtualizada = [...atividades, novaAtividade];
-      setAtividades(listaAtualizada);
-      salvarAtividadesNoStorage(listaAtualizada);
-
-      Alert.alert("Sucesso", "Atividade adicionada com sucesso!");
-      setNomeAtividade('');
-      setDataEntrega('');
-      setDisciplinaVinculada('');
+        Alert.alert("Sucesso", "Atividade adicionada com sucesso!");
+        setNomeAtividade('');
+        setDataEntrega('');
+        setDisciplinaVinculada('');
+      } catch (error) {
+        Alert.alert("Erro", getApiErrorMessage(error));
+      }
     }
   };
 
   // --- Alternar Status de Concluído da Atividade ---
-  const toggleConcluirAtividade = (id) => {
-    const listaAtualizada = atividades.map(atividade => {
+  const toggleConcluirAtividade = async (id) => {
+    const atividadeAtual = atividades.find((atividade) => atividade.id === id);
+    if (!atividadeAtual) return;
+
+    try {
+      const atualizada = await activityApi.update(id, { concluida: !atividadeAtual.feita });
+      const listaAtualizada = atividades.map(atividade => {
       if (atividade.id === id) {
-        const novoStatusFeita = !atividade.feita;
-        return {
-          ...atividade,
-          feita: novoStatusFeita,
-          status: novoStatusFeita ? 'concluida' : 'pendente'
-        };
+        return atualizada;
       }
       return atividade;
     });
 
-    setAtividades(listaAtualizada);
-    salvarAtividadesNoStorage(listaAtualizada);
+      setAtividades(listaAtualizada);
+      salvarAtividadesNoStorage(listaAtualizada);
+    } catch (error) {
+      Alert.alert("Erro", getApiErrorMessage(error));
+    }
   };
 
   // --- Gerenciamento de Seleção (Checkbox para Exclusão) ---
@@ -172,12 +189,17 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
           { 
             text: "Excluir", 
             style: "destructive",
-            onPress: () => {
-              const listaFiltrada = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
-              setDisciplinas(listaFiltrada);
-              salvarDisciplinasNoStorage(listaFiltrada);
-              setDisciplinasSelecionadas([]); 
-              Alert.alert("Sucesso", "Disciplinas excluídas.");
+            onPress: async () => {
+              try {
+                await Promise.all(disciplinasSelecionadas.map((id) => disciplineApi.remove(id)));
+                const listaFiltrada = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
+                setDisciplinas(listaFiltrada);
+                salvarDisciplinasNoStorage(listaFiltrada);
+                setDisciplinasSelecionadas([]); 
+                Alert.alert("Sucesso", "Disciplinas excluídas.");
+              } catch (error) {
+                Alert.alert("Erro", getApiErrorMessage(error));
+              }
             }
           }
         ]
@@ -196,12 +218,17 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
           { 
             text: "Excluir", 
             style: "destructive",
-            onPress: () => {
-              const listaFiltrada = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
-              setAtividades(listaFiltrada);
-              salvarAtividadesNoStorage(listaFiltrada);
-              setAtividadesSelecionadas([]); 
-              Alert.alert("Sucesso", "Atividades excluídas.");
+            onPress: async () => {
+              try {
+                await Promise.all(atividadesSelecionadas.map((id) => activityApi.remove(id)));
+                const listaFiltrada = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
+                setAtividades(listaFiltrada);
+                salvarAtividadesNoStorage(listaFiltrada);
+                setAtividadesSelecionadas([]); 
+                Alert.alert("Sucesso", "Atividades excluídas.");
+              } catch (error) {
+                Alert.alert("Erro", getApiErrorMessage(error));
+              }
             }
           }
         ]

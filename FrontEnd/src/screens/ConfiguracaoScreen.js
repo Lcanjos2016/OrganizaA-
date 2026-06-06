@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authApi, userApi } from '../services/api';
 
 export default function ConfiguracoesScreen({ navigation }) {
   const [userData, setUserData] = useState({ nome: 'Usuário', email: 'seuemail@exemplo.com' });
@@ -20,9 +21,15 @@ export default function ConfiguracoesScreen({ navigation }) {
     useCallback(() => {
       const carregarDados = async () => {
         try {
-          const dadosSalvos = await AsyncStorage.getItem('@storage_user_data');
-          if (dadosSalvos) {
-            setUserData(JSON.parse(dadosSalvos));
+          const user = await userApi.me();
+          if (user) {
+            const dados = {
+              nome: user.nome_usuario,
+              email: user.email,
+              instituicao: user.instituicao || 'UFAM',
+            };
+            setUserData(dados);
+            await AsyncStorage.setItem('@storage_user_data', JSON.stringify(dados));
           }
         } catch (e) {
           console.error("Erro ao carregar dados do usuário", e);
@@ -45,7 +52,7 @@ export default function ConfiguracoesScreen({ navigation }) {
               <Feather name="settings" size={28} color="#1C2E4A" />
               <Text style={styles.headerTitle}>Configurações</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.iconButton}>
+            <TouchableOpacity onPress={async () => { await authApi.logout(); navigation.navigate('Login'); }} style={styles.iconButton}>
               <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
             </TouchableOpacity>
           </View>
@@ -76,7 +83,7 @@ export default function ConfiguracoesScreen({ navigation }) {
               <MaterialCommunityIcons name="school-outline" size={26} color="#1C2E4A" />
               <Text style={styles.instText}>Instituição</Text>
               <TouchableOpacity style={styles.dropdownBtn}>
-                <Text style={styles.dropdownText}>UFAM</Text>
+                <Text style={styles.dropdownText}>{userData.instituicao || 'UFAM'}</Text>
                 <Feather name="chevron-down" size={18} color="#1C2E4A" />
               </TouchableOpacity>
             </View>

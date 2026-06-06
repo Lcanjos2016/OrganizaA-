@@ -13,24 +13,33 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
+import { authApi, getApiErrorMessage } from '../services/api';
 
 export default function LoginScreen({ navigation }) {
   // Estados para os campos obrigatórios
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [carregando, setCarregando] = useState(false);
   
   // Estado para mostrar/esconder a senha
   const [esconderSenha, setEsconderSenha] = useState(true);
 
   // Função para validar campos obrigatórios antes de entrar
-  const handleEntrar = () => {
+  const handleEntrar = async () => {
     if (!email.trim() || !senha.trim()) {
       Alert.alert("Campos Obrigatórios", "Por favor, preencha o e-mail e a senha.");
       return;
     }
-    
-    // Se estiver tudo preenchido, navega para a próxima tela
-    navigation.navigate('Preferencias');
+
+    try {
+      setCarregando(true);
+      await authApi.login(email.trim(), senha);
+      navigation.navigate('MainHome', { screen: 'HomeTab' });
+    } catch (error) {
+      Alert.alert("Erro no login", getApiErrorMessage(error));
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (
@@ -95,8 +104,9 @@ export default function LoginScreen({ navigation }) {
           <TouchableOpacity 
             style={[styles.buttonEntrar, { marginTop: 40 }]}
             onPress={handleEntrar}
+            disabled={carregando}
           >
-            <Text style={styles.buttonText}>Entrar</Text>
+            <Text style={styles.buttonText}>{carregando ? 'Entrando...' : 'Entrar'}</Text>
           </TouchableOpacity>
 
           {/* Link para Cadastro */}

@@ -14,6 +14,7 @@ import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { BarChart, ProgressChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { disciplineApi, activityApi } from '../services/api';
 
 const screenWidth = Dimensions.get("window").width;
 // Padding horizontal do whitePanel é 15 de cada lado (30 total) + 10 de espaço entre os cards = 40
@@ -48,15 +49,26 @@ export default function ProgressoScreen({ navigation }) {
       const processarMetricasDashboard = async () => {
         try {
           setLoading(true);
+          const [disciplinasRemotas, atividadesRemotas] = await Promise.all([
+            disciplineApi.list().catch(() => null),
+            activityApi.list().catch(() => null),
+          ]);
           const resDisciplinas = await AsyncStorage.getItem('@storage_disciplinas');
           const resAtividades = await AsyncStorage.getItem('@storage_atividades');
           const resFaltas = await AsyncStorage.getItem('@storage_faltas');
           const resNotas = await AsyncStorage.getItem('@storage_notas_progresso');
 
-          const listaDisciplinas = resDisciplinas ? JSON.parse(resDisciplinas) : [];
-          const listaAtividades = resAtividades ? JSON.parse(resAtividades) : [];
+          const listaDisciplinas = disciplinasRemotas || (resDisciplinas ? JSON.parse(resDisciplinas) : []);
+          const listaAtividades = atividadesRemotas || (resAtividades ? JSON.parse(resAtividades) : []);
           const listaFaltas = resFaltas ? JSON.parse(resFaltas) : [];
-          const listaNotas = resNotas ? JSON.parse(resNotas) : [];
+          const listaNotas = listaDisciplinas
+            .filter(d => d.notaFinal && d.situacao)
+            .map(d => ({
+              id: d.id,
+              disciplina: d.nome,
+              media: parseFloat(d.notaFinal) || 0,
+              situacao: d.situacao,
+            }));
 
           // 1. Notas das Disciplinas
           if (listaNotas.length > 0) {
@@ -85,7 +97,11 @@ export default function ProgressoScreen({ navigation }) {
           const mesesMapeados = ["Mar", "Abr", "Mai", "Jun"];
           const contagemMeses = { "Mar": 0, "Abr": 0, "Mai": 0, "Jun": 0 };
 
-          listaFaltas.forEach(f => {
+          const faltasFonte = listaFaltas.length > 0
+            ? listaFaltas
+            : listaDisciplinas.map(d => ({ quantidade: d.faltas || 0, mes: mesesMapeados[new Date().getMonth()] || "Jun" }));
+
+          faltasFonte.forEach(f => {
             somaFaltasTotal += parseInt(f.quantidade || 0);
             if (contagemMeses[f.mes] !== undefined) {
               contagemMeses[f.mes] += parseInt(f.quantidade || 0);

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, SafeAr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { userApi, getApiErrorMessage } from '../services/api';
 
 export default function PreferenciaConfigScreen({ navigation }) {
   const [avatar, setAvatar] = useState('robot');
@@ -22,13 +23,14 @@ export default function PreferenciaConfigScreen({ navigation }) {
   const salvarPreferencias = async () => {
     try {
       const dados = { avatar, curso, disciplina, atividades };
-      await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
-      
-      console.log('Dados salvos:', dados);
-      
-      navigation.navigate('Home');
+      await Promise.all([
+        userApi.update({ curso, avatar }),
+        userApi.savePreferences({ dados }),
+        AsyncStorage.setItem('@user_prefs', JSON.stringify(dados)),
+      ]);
+      navigation.navigate('MainHome', { screen: 'HomeTab' });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar suas preferências.");
+      Alert.alert("Erro", getApiErrorMessage(error));
     }
   };
 

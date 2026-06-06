@@ -4,18 +4,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { userApi, activityApi, disciplineApi } from '../services/api';
 
 export default function HomeScreen() {
   const [userData, setUserData] = useState(null);
+  const [atividadesHoje, setAtividadesHoje] = useState([]);
+  const [totalFaltas, setTotalFaltas] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
       const loadData = async () => {
         try {
-          const jsonValue = await AsyncStorage.getItem('@user_prefs');
-          if (jsonValue != null) {
-            setUserData(JSON.parse(jsonValue));
-          }
+          const [prefs, user, atividades, disciplinas] = await Promise.all([
+            userApi.preferences().catch(() => null),
+            userApi.me().catch(() => null),
+            activityApi.list().catch(() => []),
+            disciplineApi.list().catch(() => []),
+          ]);
+          const dados = {
+            ...(prefs?.dados || {}),
+            curso: user?.curso || prefs?.dados?.curso || '',
+            nome: user?.nome_usuario || 'estudante',
+          };
+          setUserData(dados);
+          setAtividadesHoje(atividades.slice(0, 3));
+          setTotalFaltas(disciplinas.reduce((soma, item) => soma + (item.faltas || 0), 0));
+          await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
         } catch (e) {
           console.log("Erro ao carregar dados:", e);
         }
@@ -35,7 +49,7 @@ export default function HomeScreen() {
         >
           {/* Cabeçalho de boas-vindas */}
           <View style={styles.headerContainer}>
-            <Text style={styles.greeting}>Olá, Sabrina!</Text>
+            <Text style={styles.greeting}>Olá, {userData?.nome || 'estudante'}!</Text>
             {userData?.curso ? (
               <Text style={styles.courseSubtitle}>Curso: {userData.curso}</Text>
             ) : null}
@@ -50,7 +64,7 @@ export default function HomeScreen() {
                   <Text style={styles.progressText}>86%</Text>
                 </View>
               </View>
-              <Text style={styles.subText}>Você está com x faltas.</Text>
+              <Text style={styles.subText}>Você está com {totalFaltas} faltas.</Text>
             </View>
           )}
 
@@ -58,11 +72,15 @@ export default function HomeScreen() {
           <View style={styles.whiteCard}>
             <Text style={styles.cardTitleBlue}>Próximas atividades para hoje</Text>
             <View style={styles.activityList}>
-              <Text style={styles.activityItem}>
-                ⏰ 10:00 - Aula: {userData?.disciplina || 'Disciplina não informada'}
-              </Text>
-              <Text style={styles.activityItem}>📝 14:00 - Estudo Dirigido</Text>
-              <Text style={styles.activityItem}>💻 16:00 - Grupo de Projeto</Text>
+              {atividadesHoje.length > 0 ? (
+                atividadesHoje.map((atividade) => (
+                  <Text key={atividade.id} style={styles.activityItem}>
+                    {atividade.nome} - {atividade.disciplina || 'Sem disciplina'}
+                  </Text>
+                ))
+              ) : (
+                <Text style={styles.activityItem}>Nenhuma atividade cadastrada.</Text>
+              )}
             </View>
           </View>
 

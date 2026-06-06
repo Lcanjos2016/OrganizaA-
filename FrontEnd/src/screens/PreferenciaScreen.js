@@ -14,6 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { userApi, getApiErrorMessage } from '../services/api';
 
 export default function PreferenciaScreen({ navigation }) {
   const [avatar, setAvatar] = useState('robot');
@@ -29,16 +30,31 @@ export default function PreferenciaScreen({ navigation }) {
   useEffect(() => {
     const carregarPreferenciasAtuais = async () => {
       try {
-        const jsonValue = await AsyncStorage.getItem('@user_prefs');
-        if (jsonValue != null) {
-          const dados = JSON.parse(jsonValue);
-          setAvatar(dados.avatar || 'robot');
-          setCurso(dados.curso || '');
-          setDisciplina(dados.disciplina || '');
-          if (dados.atividades) setAtividades(dados.atividades);
+        const [prefs, user] = await Promise.all([
+          userApi.preferences().catch(() => null),
+          userApi.me().catch(() => null),
+        ]);
+
+        if (prefs?.dados) {
+          setAvatar(prefs.dados.avatar || 'robot');
+          setDisciplina(prefs.dados.disciplina || '');
+          if (prefs.dados.atividades) setAtividades(prefs.dados.atividades);
+        }
+
+        if (user?.curso) {
+          setCurso(user.curso);
+        } else {
+          const jsonValue = await AsyncStorage.getItem('@user_prefs');
+          if (jsonValue != null) {
+            const dados = JSON.parse(jsonValue);
+            setAvatar(dados.avatar || 'robot');
+            setCurso(dados.curso || '');
+            setDisciplina(dados.disciplina || '');
+            if (dados.atividades) setAtividades(dados.atividades);
+          }
         }
       } catch (error) {
-        console.log("Erro ao carregar preferências antigas:", error);
+        console.log("Erro ao carregar preferências:", error);
       }
     };
     carregarPreferenciasAtuais();
@@ -51,12 +67,14 @@ export default function PreferenciaScreen({ navigation }) {
   const salvarPreferencias = async () => {
     try {
       const dados = { avatar, curso, disciplina, atividades };
-      await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
-      
-      console.log('Dados salvos com sucesso:', dados);
+      await Promise.all([
+        userApi.update({ curso, avatar }),
+        userApi.savePreferences({ dados }),
+        AsyncStorage.setItem('@user_prefs', JSON.stringify(dados)),
+      ]);
       navigation.navigate('MainHome', { screen: 'HomeTab' });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar suas preferências.");
+      Alert.alert("Erro", getApiErrorMessage(error));
     }
   };
 

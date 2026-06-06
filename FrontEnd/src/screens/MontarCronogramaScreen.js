@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { disciplineApi, scheduleApi, getApiErrorMessage } from '../services/api';
 
 export default function MontarCronogramaScreen({ navigation }) {
   
@@ -33,12 +34,9 @@ export default function MontarCronogramaScreen({ navigation }) {
     useCallback(() => {
       const carregarDisciplinas = async () => {
         try {
-          const dadosSalvos = await AsyncStorage.getItem('@storage_disciplinas');
-          if (dadosSalvos !== null) {
-            setDisciplinas(JSON.parse(dadosSalvos));
-          } else {
-            setDisciplinas([]);
-          }
+          const lista = await disciplineApi.list();
+          setDisciplinas(lista);
+          await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
         } catch (error) {
           console.log("Erro ao carregar disciplinas no cronograma:", error);
         }
@@ -54,7 +52,23 @@ export default function MontarCronogramaScreen({ navigation }) {
     setTableRows(updatedRows);
   };
   
-  const handleSalvar = () => Alert.alert("Sucesso", "Seu cronograma foi salvo no teste!");
+  const handleSalvar = async () => {
+    try {
+      const hoje = new Date();
+      const dataInicio = hoje.toISOString().slice(0, 10);
+      const fim = new Date(hoje);
+      fim.setMonth(fim.getMonth() + 6);
+      await scheduleApi.create({
+        titulo: 'Cronograma de aulas',
+        dataInicio,
+        dataFim: fim.toISOString().slice(0, 10),
+        dicasDoMentor: JSON.stringify(tableRows),
+      });
+      Alert.alert("Sucesso", "Seu cronograma foi salvo!");
+    } catch (error) {
+      Alert.alert("Erro", getApiErrorMessage(error));
+    }
+  };
   const handleEsvaziar = () => {
     const linhasLimpas = tableRows.map(row => ({
       ...row, seg: '', ter: '', qua: '', qui: '', sex: ''

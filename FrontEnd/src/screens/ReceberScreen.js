@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { userApi, getApiErrorMessage } from '../services/api';
 
 export default function ReceberScreen({ navigation }) {
   
@@ -17,9 +18,14 @@ export default function ReceberScreen({ navigation }) {
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const handleSalvar = () => {
-    Alert.alert("Sucesso", "Preferência de notificação salva!");
-    navigation.goBack();
+  const handleSalvar = async () => {
+    try {
+      await userApi.savePreferences({ notificacoesAtivas: isEnabled });
+      Alert.alert("Sucesso", "Preferência de notificação salva!");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Erro", getApiErrorMessage(error));
+    }
   };
 
   return (

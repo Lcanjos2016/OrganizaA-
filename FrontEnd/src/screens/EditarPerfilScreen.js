@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -12,16 +12,36 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { userApi, getApiErrorMessage } from '../services/api';
 
 export default function EditarPerfilScreen({ navigation }) {
   
   
   const [nome, setNome] = useState('');
 
+  useFocusEffect(
+    useCallback(() => {
+      const carregarPerfil = async () => {
+        try {
+          const user = await userApi.me();
+          setNome(user?.nome_usuario || '');
+        } catch (error) {
+          console.log("Erro ao carregar perfil:", error);
+        }
+      };
+      carregarPerfil();
+    }, [])
+  );
   
-  const handleSalvar = () => {
-    Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-    navigation.goBack(); 
+  const handleSalvar = async () => {
+    try {
+      await userApi.update({ nomeUsuario: nome });
+      Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Erro", getApiErrorMessage(error));
+    }
   };
 
   return (

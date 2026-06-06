@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { disciplineApi, getApiErrorMessage } from '../services/api';
 
 export default function FaltasScreen({ navigation, route }) {
   const [abaAtiva, setAbaAtiva] = useState('Adicionar');
@@ -32,12 +33,9 @@ export default function FaltasScreen({ navigation, route }) {
     useCallback(() => {
       const carregarDisciplinasParaFaltas = async () => {
         try {
-          const dadosSalvos = await AsyncStorage.getItem('@storage_disciplinas');
-          if (dadosSalvos !== null) {
-            setDisciplinas(JSON.parse(dadosSalvos));
-          } else {
-            setDisciplinas([]);
-          }
+          const lista = await disciplineApi.list();
+          setDisciplinas(lista);
+          await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
         } catch (error) {
           console.log("Erro ao carregar disciplinas na tela de faltas:", error);
         }
@@ -77,6 +75,13 @@ export default function FaltasScreen({ navigation, route }) {
   const handleSalvar = async () => {
     try {
       await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(disciplinas));
+      await Promise.all(
+        disciplinas.map((disciplina) =>
+          disciplineApi.saveAbsences(disciplina.id, {
+            numeroFaltas: disciplina.faltas || 0,
+          })
+        )
+      );
       
       const mesesNomes = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
       const mesAtualNome = mesesNomes[new Date().getMonth()];
@@ -91,7 +96,7 @@ export default function FaltasScreen({ navigation, route }) {
       await AsyncStorage.setItem('@storage_faltas', JSON.stringify(listaFaltasMensais));
       Alert.alert("Sucesso", "Faltas salvas e sincronizadas com o Progresso!");
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar as faltas.");
+      Alert.alert("Erro", getApiErrorMessage(error));
     }
   };
 

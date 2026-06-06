@@ -8,14 +8,18 @@ import {
   SafeAreaView, 
   KeyboardAvoidingView, 
   Platform,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { aiApi, getApiErrorMessage } from '../services/api';
 
 export default function ChatBotScreen({ navigation }) {
   
   const [menuVisivel, setMenuVisivel] = useState(false);
+  const [mensagem, setMensagem] = useState('');
+  const [mensagens, setMensagens] = useState([]);
 
   
   const handleCarregarDocumento = () => {
@@ -26,6 +30,24 @@ export default function ChatBotScreen({ navigation }) {
   const handleCarregarFoto = () => {
     setMenuVisivel(false); 
     Alert.alert("Foto", "Aqui abrirá a galeria do celular para escolher uma imagem.");
+  };
+
+  const handleEnviar = async () => {
+    if (!mensagem.trim()) return;
+
+    const texto = mensagem.trim();
+    setMensagem('');
+    setMensagens((atuais) => [...atuais, { tipo: 'user', texto }]);
+
+    try {
+      const resposta = await aiApi.analyzeProgress();
+      const dicas = resposta.dicas?.length
+        ? resposta.dicas.join('\n')
+        : 'Ainda nao encontrei dicas disponiveis para seu progresso.';
+      setMensagens((atuais) => [...atuais, { tipo: 'bot', texto: dicas }]);
+    } catch (error) {
+      setMensagens((atuais) => [...atuais, { tipo: 'bot', texto: getApiErrorMessage(error) }]);
+    }
   };
 
   return (
@@ -71,10 +93,13 @@ export default function ChatBotScreen({ navigation }) {
                 placeholder="Peça suas dicas aqui" 
                 placeholderTextColor="#A0A0A0"
                 autoFocus={true} 
+                value={mensagem}
+                onChangeText={setMensagem}
+                onSubmitEditing={handleEnviar}
               />
               
-              <TouchableOpacity style={styles.iconMic}>
-                <Feather name="mic" size={22} color="#1C2E4A" />
+              <TouchableOpacity style={styles.iconMic} onPress={handleEnviar}>
+                <Feather name="send" size={22} color="#1C2E4A" />
               </TouchableOpacity>
             </View>
 
@@ -97,9 +122,13 @@ export default function ChatBotScreen({ navigation }) {
         </KeyboardAvoidingView>
 
         {/* --- Área de Mensagens --- */}
-        <View style={styles.chatArea}>
-          {/* Futuras mensagens renderizadas aqui */}
-        </View>
+        <ScrollView style={styles.chatArea} contentContainerStyle={styles.chatContent}>
+          {mensagens.map((item, index) => (
+            <View key={`${item.tipo}-${index}`} style={[styles.messageBubble, item.tipo === 'user' ? styles.userBubble : styles.botBubble]}>
+              <Text style={styles.messageText}>{item.texto}</Text>
+            </View>
+          ))}
+        </ScrollView>
 
       </SafeAreaView>
     </LinearGradient>
@@ -169,5 +198,10 @@ const styles = StyleSheet.create({
     color: '#1C2E4A'
   },
 
-  chatArea: { flex: 1, zIndex: 1 } 
+  chatArea: { flex: 1, zIndex: 1, paddingHorizontal: 20, marginTop: 20 },
+  chatContent: { paddingBottom: 30 },
+  messageBubble: { padding: 12, borderRadius: 12, marginBottom: 10, maxWidth: '88%' },
+  userBubble: { backgroundColor: '#FFF', alignSelf: 'flex-end' },
+  botBubble: { backgroundColor: '#8BAEE0', alignSelf: 'flex-start' },
+  messageText: { color: '#1C2E4A', fontWeight: '600', lineHeight: 18 }
 });

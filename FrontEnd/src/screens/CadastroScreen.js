@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Dimensions, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Dimensions, Modal, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { authApi, getApiErrorMessage } from '../services/api';
 
 const { height } = Dimensions.get('window');
 
@@ -9,14 +10,41 @@ export default function CadastroScreen({ navigation }) {
   const [repetirSenhaVisivel, setRepetirSenhaVisivel] = useState(false);
   const [instituicao, setInstituicao] = useState('');
   const [modalVisivel, setModalVisivel] = useState(false);
+  const [nomeUsuario, setNomeUsuario] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [repetirSenha, setRepetirSenha] = useState('');
+  const [carregando, setCarregando] = useState(false);
 
   const opcoes = ['UFAM', 'UEA', 'IFAM'];
   const linkOlhoAberto = 'https://cdn-icons-png.flaticon.com/512/709/709612.png';
   const linkOlhoFechado = 'https://cdn-icons-png.flaticon.com/512/2767/2767146.png';
 
-  // Alteração feita bem aqui:
-  const handleCadastro = () => {
-    navigation.navigate('Login'); 
+  const handleCadastro = async () => {
+    if (!nomeUsuario.trim() || !email.trim() || !senha || !repetirSenha || !instituicao) {
+      Alert.alert("Campos obrigatórios", "Preencha nome, instituição, e-mail e senha.");
+      return;
+    }
+
+    if (senha !== repetirSenha) {
+      Alert.alert("Senha inválida", "As senhas informadas não conferem.");
+      return;
+    }
+
+    try {
+      setCarregando(true);
+      await authApi.register({
+        nomeUsuario: nomeUsuario.trim(),
+        email: email.trim(),
+        senha,
+        instituicao,
+      });
+      navigation.navigate('Preferencias');
+    } catch (error) {
+      Alert.alert("Erro no cadastro", getApiErrorMessage(error));
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (
@@ -33,7 +61,7 @@ export default function CadastroScreen({ navigation }) {
           <Text style={styles.title}>Cadastre - se</Text>
 
           <View style={styles.inputBox}>
-            <TextInput style={styles.input} placeholder="Nome do Usuário" placeholderTextColor="#A0A0A0" />
+            <TextInput style={styles.input} placeholder="Nome do Usuário" placeholderTextColor="#A0A0A0" value={nomeUsuario} onChangeText={setNomeUsuario} />
           </View>
 
           <TouchableOpacity style={styles.inputBox} onPress={() => setModalVisivel(true)}>
@@ -44,25 +72,25 @@ export default function CadastroScreen({ navigation }) {
           </TouchableOpacity>
 
           <View style={styles.inputBox}>
-            <TextInput style={styles.input} placeholder="Insira e-mail" placeholderTextColor="#A0A0A0" />
+            <TextInput style={styles.input} placeholder="Insira e-mail" placeholderTextColor="#A0A0A0" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
           </View>
 
           <View style={styles.inputBox}>
-            <TextInput style={styles.input} placeholder="Insira senha" placeholderTextColor="#A0A0A0" secureTextEntry={!senhaVisivel} />
+            <TextInput style={styles.input} placeholder="Insira senha" placeholderTextColor="#A0A0A0" secureTextEntry={!senhaVisivel} value={senha} onChangeText={setSenha} autoCapitalize="none" />
             <TouchableOpacity onPress={() => setSenhaVisivel(!senhaVisivel)}>
               <Image source={{ uri: senhaVisivel ? linkOlhoAberto : linkOlhoFechado }} style={styles.iconImage} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.inputBox}>
-            <TextInput style={styles.input} placeholder="Repetir senha" placeholderTextColor="#A0A0A0" secureTextEntry={!repetirSenhaVisivel} />
+            <TextInput style={styles.input} placeholder="Repetir senha" placeholderTextColor="#A0A0A0" secureTextEntry={!repetirSenhaVisivel} value={repetirSenha} onChangeText={setRepetirSenha} autoCapitalize="none" />
             <TouchableOpacity onPress={() => setRepetirSenhaVisivel(!repetirSenhaVisivel)}>
               <Image source={{ uri: repetirSenhaVisivel ? linkOlhoAberto : linkOlhoFechado }} style={styles.iconImage} />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.buttonCadastrar} onPress={handleCadastro}>
-            <Text style={styles.buttonText}>Cadastrar</Text>
+          <TouchableOpacity style={styles.buttonCadastrar} onPress={handleCadastro} disabled={carregando}>
+            <Text style={styles.buttonText}>{carregando ? 'Cadastrando...' : 'Cadastrar'}</Text>
           </TouchableOpacity>
 
 
