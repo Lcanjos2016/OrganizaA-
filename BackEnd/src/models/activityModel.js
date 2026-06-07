@@ -12,6 +12,17 @@ async function list(userId) {
   return result.rows;
 }
 
+async function findById(userId, activityId) {
+  const result = await db.query(
+    `SELECT a.*, d.codigo_disciplina, d.nome_disciplina
+       FROM atividades a
+       LEFT JOIN disciplinas d ON d.id_disciplina = a.id_disciplina
+      WHERE a.id_usuario = $1 AND a.id_atividade = $2`,
+    [userId, activityId]
+  );
+  return result.rows[0];
+}
+
 async function create(userId, data) {
   const result = await db.query(
     `INSERT INTO atividades (
@@ -71,6 +82,7 @@ async function remove(userId, activityId) {
 
 module.exports = {
   list,
+  findById,
   create,
   update,
   remove,

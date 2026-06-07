@@ -11,6 +11,16 @@ async function list(req, res, next) {
   }
 }
 
+async function getById(req, res, next) {
+  try {
+    const discipline = await disciplineModel.findById(req.user.id, req.validated.params.id);
+    if (!discipline) throw notFound('Disciplina nao encontrada');
+    res.json(discipline);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function create(req, res, next) {
   try {
     const user = await userModel.findById(req.user.id);
@@ -111,6 +121,7 @@ async function saveAbsences(req, res, next) {
 
 module.exports = {
   list,
+  getById,
   create,
   update,
   remove,

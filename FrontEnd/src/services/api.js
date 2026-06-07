@@ -92,6 +92,7 @@ export const userApi = {
 
 export const disciplineApi = {
   list: () => api.get('/disciplines').then((response) => response.data.map(mapDisciplina)),
+  get: (id) => api.get(`/disciplines/${id}`).then((response) => mapDisciplina(response.data)),
   create: (data) => api.post('/disciplines', data).then((response) => mapDisciplina(response.data)),
   update: (id, data) => api.patch(`/disciplines/${id}`, data).then((response) => mapDisciplina(response.data)),
   remove: (id) => api.delete(`/disciplines/${id}`),
@@ -103,6 +104,7 @@ export const disciplineApi = {
 
 export const activityApi = {
   list: () => api.get('/activities').then((response) => response.data.map(mapAtividade)),
+  get: (id) => api.get(`/activities/${id}`).then((response) => mapAtividade(response.data)),
   create: (data) => api.post('/activities', data).then((response) => mapAtividade(response.data)),
   update: (id, data) => api.patch(`/activities/${id}`, data).then((response) => mapAtividade(response.data)),
   remove: (id) => api.delete(`/activities/${id}`),
@@ -110,16 +112,21 @@ export const activityApi = {
 
 export const scheduleApi = {
   list: () => api.get('/schedules').then((response) => response.data),
+  get: (id) => api.get(`/schedules/${id}`).then((response) => response.data),
   create: (data) => api.post('/schedules', data).then((response) => response.data),
   update: (id, data) => api.patch(`/schedules/${id}`, data).then((response) => response.data),
   remove: (id) => api.delete(`/schedules/${id}`),
   listClassTimes: () => api.get('/class-times').then((response) => response.data),
+  getClassTime: (id) => api.get(`/class-times/${id}`).then((response) => response.data),
   createClassTime: (data) => api.post('/class-times', data).then((response) => response.data),
+  updateClassTime: (id, data) =>
+    api.patch(`/class-times/${id}`, data).then((response) => response.data),
   removeClassTime: (id) => api.delete(`/class-times/${id}`),
 };
 
 export const reminderApi = {
   list: () => api.get('/reminders').then((response) => response.data),
+  get: (id) => api.get(`/reminders/${id}`).then((response) => response.data),
   create: (data) => api.post('/reminders', data).then((response) => response.data),
   update: (id, data) => api.patch(`/reminders/${id}`, data).then((response) => response.data),
   remove: (id) => api.delete(`/reminders/${id}`),
@@ -128,6 +135,10 @@ export const reminderApi = {
 export const aiApi = {
   analyzeProgress: () => api.post('/ai/progress').then((response) => response.data),
   logs: () => api.get('/ai/logs').then((response) => response.data),
+};
+
+export const dashboardApi = {
+  summary: () => api.get('/dashboard').then((response) => response.data),
 };
 
 export default api;

@@ -8,6 +8,14 @@ async function list(userId) {
   return result.rows;
 }
 
+async function findById(userId, reminderId) {
+  const result = await db.query(
+    'SELECT * FROM lembretes WHERE id_usuario = $1 AND id_lembrete = $2',
+    [userId, reminderId]
+  );
+  return result.rows[0];
+}
+
 async function create(userId, data) {
   const result = await db.query(
     `INSERT INTO lembretes (
@@ -63,6 +71,7 @@ async function remove(userId, reminderId) {
 
 module.exports = {
   list,
+  findById,
   create,
   update,
   remove,

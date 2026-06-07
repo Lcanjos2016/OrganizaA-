@@ -8,6 +8,14 @@ async function listCronogramas(userId) {
   return result.rows;
 }
 
+async function findCronogramaById(userId, cronogramaId) {
+  const result = await db.query(
+    'SELECT * FROM cronogramas WHERE id_usuario = $1 AND id_cronograma = $2',
+    [userId, cronogramaId]
+  );
+  return result.rows[0];
+}
+
 async function createCronograma(userId, data) {
   const result = await db.query(
     `INSERT INTO cronogramas (id_usuario, titulo, data_inicio, data_fim, dicas_do_mentor, ativo)
@@ -61,14 +69,64 @@ async function listHorarios(userId) {
   return result.rows;
 }
 
+async function findHorarioById(userId, horarioId) {
+  const result = await db.query(
+    `SELECT h.*, d.codigo_disciplina, d.nome_disciplina
+       FROM horarios_aula h
+       LEFT JOIN disciplinas d ON d.id_disciplina = h.id_disciplina
+      WHERE h.id_usuario = $1 AND h.id_horario = $2`,
+    [userId, horarioId]
+  );
+  return result.rows[0];
+}
+
 async function createHorario(userId, data) {
   const result = await db.query(
-    `INSERT INTO horarios_aula (
-       id_usuario, id_disciplina, dia_semana, hora_inicio, hora_fim, local_aula
-     )
-     VALUES ($1, $2, $3, $4, $5, $6)
+    `INSERT INTO horarios_aula (id_usuario, id_disciplina, dia_semana, hora_inicio, hora_fim, local_aula)
+     SELECT $1, $2, $3, $4, $5, $6
+      WHERE NOT EXISTS (
+        SELECT 1
+          FROM horarios_aula
+         WHERE id_usuario = $1
+           AND dia_semana = $3
+           AND $4 < hora_fim
+           AND $5 > hora_inicio
+      )
      RETURNING *`,
     [userId, data.idDisciplina, data.diaSemana, data.horaInicio, data.horaFim, data.localAula]
+  );
+  return result.rows[0];
+}
+
+async function updateHorario(userId, horarioId, data) {
+  const result = await db.query(
+    `UPDATE horarios_aula h
+        SET id_disciplina = COALESCE($3, h.id_disciplina),
+            dia_semana = COALESCE($4, h.dia_semana),
+            hora_inicio = COALESCE($5, h.hora_inicio),
+            hora_fim = COALESCE($6, h.hora_fim),
+            local_aula = COALESCE($7, h.local_aula)
+      WHERE h.id_usuario = $1
+        AND h.id_horario = $2
+        AND NOT EXISTS (
+          SELECT 1
+            FROM horarios_aula conflito
+           WHERE conflito.id_usuario = $1
+             AND conflito.id_horario <> $2
+             AND conflito.dia_semana = COALESCE($4, h.dia_semana)
+             AND COALESCE($5, h.hora_inicio) < conflito.hora_fim
+             AND COALESCE($6, h.hora_fim) > conflito.hora_inicio
+        )
+      RETURNING h.*`,
+    [
+      userId,
+      horarioId,
+      data.idDisciplina,
+      data.diaSemana,
+      data.horaInicio,
+      data.horaFim,
+      data.localAula,
+    ]
   );
   return result.rows[0];
 }
@@ -83,10 +141,13 @@ async function removeHorario(userId, horarioId) {
 
 module.exports = {
   listCronogramas,
+  findCronogramaById,
   createCronograma,
   updateCronograma,
   removeCronograma,
   listHorarios,
+  findHorarioById,
   createHorario,
+  updateHorario,
   removeHorario,
 };

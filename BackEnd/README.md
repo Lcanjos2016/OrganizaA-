@@ -42,6 +42,99 @@ DATABASE_URL=postgres://postgres:SUA_SENHA@localhost:5433/OrganizaAE
 - `GET/POST/PATCH/DELETE /api/reminders`: lembretes.
 - `POST /api/ai/progress`: analise de progresso baseada nas notas e faltas cadastradas.
 - `GET /api/ai/logs`: historico das analises.
+- `GET /api/dashboard`: resumo de notas, faltas, disciplinas e atividades.
+
+## Exemplos
+
+Cadastro:
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "nomeUsuario": "Maria Silva",
+  "email": "maria@email.com",
+  "senha": "senha123",
+  "instituicao": "UFAM",
+  "curso": "Engenharia de Software"
+}
+```
+
+Criar disciplina:
+
+```http
+POST /api/disciplines
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+{
+  "codigoDisciplina": "ES101",
+  "nomeDisciplina": "Engenharia de Requisitos"
+}
+```
+
+Registrar notas:
+
+```http
+PUT /api/disciplines/1/grades
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+{
+  "nota1": 8.5,
+  "nota2": 7.5,
+  "nota3": 9
+}
+```
+
+Registrar faltas:
+
+```http
+PUT /api/disciplines/1/absences
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+{
+  "numeroFaltas": 4,
+  "limiteFaltas": 15
+}
+```
+
+Criar atividade:
+
+```http
+POST /api/activities
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+{
+  "idDisciplina": 1,
+  "dataAtividade": "2026-06-20",
+  "topicoEstudo": "Prova de requisitos",
+  "duracaoMinutos": 90,
+  "tipoAtividade": "Prova"
+}
+```
+
+Criar horario de aula:
+
+```http
+POST /api/class-times
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+{
+  "idDisciplina": 1,
+  "diaSemana": 2,
+  "horaInicio": "08:00",
+  "horaFim": "10:00",
+  "localAula": "Sala 10"
+}
+```
+
+Consultas individuais usam `GET /api/recurso/:id`. Horarios tambem aceitam
+`PATCH /api/class-times/:id`. Horarios sobrepostos no mesmo dia retornam erro `400`.
 
 Rotas protegidas exigem header:
 

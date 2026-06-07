@@ -147,6 +147,18 @@ const horario = z.object({
   query: z.any().optional(),
 });
 
+const horarioUpdate = z.object({
+  body: z.object({
+    idDisciplina: z.number().int().positive().optional(),
+    diaSemana: z.number().int().min(1).max(7).optional(),
+    horaInicio: z.string().min(4).optional(),
+    horaFim: z.string().min(4).optional(),
+    localAula: z.string().optional(),
+  }).refine((data) => Object.keys(data).length > 0),
+  params: z.object({ id: z.coerce.number().int().positive() }),
+  query: z.any().optional(),
+});
+
 const reminder = z.object({
   body: z.object({
     idAtividade: z.number().int().positive().optional(),
@@ -184,6 +196,7 @@ module.exports = {
   cronograma,
   cronogramaCreate,
   horario,
+  horarioUpdate,
   reminder,
   reminderCreate,
 };
