@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView, 
-  ScrollView,
-  Alert,
-  Modal,
-  FlatList
+  View, Text, TextInput, TouchableOpacity, StyleSheet, 
+  SafeAreaView, ScrollView, Alert, Modal, FlatList, Platform
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+<<<<<<< HEAD
 import { disciplineApi, activityApi, getApiErrorMessage } from '../services/api';
 
 const normalizarData = (texto) => {
@@ -25,30 +18,32 @@ const normalizarData = (texto) => {
   }
   return valor;
 };
+=======
+import DateTimePicker from '@react-native-community/datetimepicker';
+>>>>>>> abdab57 (Front Finalizado)
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
-  
   const [abaAtiva, setAbaAtiva] = useState('Disciplinas');
   
-  // --- Estados dos Formulários ---
+  // Estados
   const [codigo, setCodigo] = useState('');
   const [nome, setNome] = useState('');
-
   const [nomeAtividade, setNomeAtividade] = useState('');
   const [dataEntrega, setDataEntrega] = useState('');
   const [disciplinaVinculada, setDisciplinaVinculada] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  
+  // Estados do Calendário
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
-  // --- Estados das Listas Dinâmicas ---
   const [disciplinas, setDisciplinas] = useState([]);
   const [atividades, setAtividades] = useState([]);
-
-  // --- Estados de Seleção para Exclusão ---
   const [disciplinasSelecionadas, setDisciplinasSelecionadas] = useState([]);
   const [atividadesSelecionadas, setAtividadesSelecionadas] = useState([]);
 
-  // Carregar dados salvos ao iniciar a tela
   useEffect(() => {
+<<<<<<< HEAD
     const carregarDadosIniciais = async () => {
       try {
         const [disciplinasApi, atividadesApi] = await Promise.all([
@@ -62,19 +57,29 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
       } catch (error) {
         console.log("Erro ao carregar dados iniciais:", error);
       }
+=======
+    const carregarDados = async () => {
+      const d = await AsyncStorage.getItem('@storage_disciplinas');
+      const a = await AsyncStorage.getItem('@storage_atividades');
+      if (d) setDisciplinas(JSON.parse(d));
+      if (a) setAtividades(JSON.parse(a));
+>>>>>>> abdab57 (Front Finalizado)
     };
-    carregarDadosIniciais();
+    carregarDados();
   }, []);
 
-  // --- Funções de Persistência ---
-  const salvarDisciplinasNoStorage = async (novaLista) => {
-    try {
-      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(novaLista));
-    } catch (error) {
-      console.log("Erro ao salvar disciplinas:", error);
+  const onChangeDate = (event, selectedDate) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+      const dia = String(selectedDate.getDate()).padStart(2, '0');
+      const mes = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const ano = selectedDate.getFullYear();
+      setDataEntrega(`${dia}/${mes}/${ano}`);
     }
   };
 
+<<<<<<< HEAD
   const salvarAtividadesNoStorage = async (novaLista) => {
     try {
       await AsyncStorage.setItem('@storage_atividades', JSON.stringify(novaLista));
@@ -157,6 +162,8 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
   };
 
   // --- Gerenciamento de Seleção (Checkbox para Exclusão) ---
+=======
+>>>>>>> abdab57 (Front Finalizado)
   const toggleSelecioneDisciplina = (id) => {
     if (disciplinasSelecionadas.includes(id)) {
       setDisciplinasSelecionadas(disciplinasSelecionadas.filter(item => item !== id));
@@ -173,9 +180,17 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
     }
   };
 
-  // --- Ação de Excluir ---
+  const toggleConcluirAtividade = (id) => {
+    const novasAtividades = atividades.map(item => 
+      item.id === id ? { ...item, feita: !item.feita } : item
+    );
+    setAtividades(novasAtividades);
+    AsyncStorage.setItem('@storage_atividades', JSON.stringify(novasAtividades));
+  };
+
   const handleExcluir = () => {
     if (abaAtiva === 'Disciplinas') {
+<<<<<<< HEAD
       if (disciplinasSelecionadas.length === 0) {
         Alert.alert("Aviso", "Nenhuma disciplina selecionada para excluir.");
         return;
@@ -233,86 +248,76 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
           }
         ]
       );
+=======
+      const novas = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
+      setDisciplinas(novas);
+      setDisciplinasSelecionadas([]);
+      AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(novas));
+    } else {
+      const novas = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
+      setAtividades(novas);
+      setAtividadesSelecionadas([]);
+      AsyncStorage.setItem('@storage_atividades', JSON.stringify(novas));
+>>>>>>> abdab57 (Front Finalizado)
     }
+  };
+
+  const handleSalvar = () => {
+    if (abaAtiva === 'Disciplinas') {
+      if (!codigo.trim() || !nome.trim()) return Alert.alert("Aviso", "Preencha os campos.");
+      const nova = { id: Math.random().toString(), codigo: codigo.toUpperCase(), nome, faltas: 0 };
+      const lista = [...disciplinas, nova];
+      setDisciplinas(lista);
+      AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
+      setCodigo(''); setNome('');
+    } else {
+      if (!nomeAtividade.trim() || !dataEntrega.trim() || !disciplinaVinculada) return Alert.alert("Aviso", "Preencha todos os campos.");
+      const nova = { id: Math.random().toString(), nome: nomeAtividade, data: dataEntrega, disciplina: disciplinaVinculada, feita: false };
+      const lista = [...atividades, nova];
+      setAtividades(lista);
+      AsyncStorage.setItem('@storage_atividades', JSON.stringify(lista));
+      setNomeAtividade(''); setDataEntrega(''); setDisciplinaVinculada('');
+    }
+    Alert.alert("Sucesso", "Salvo com sucesso!");
   };
 
   return (
     <LinearGradient colors={['#B3C9EC', '#CBDFFF', '#EBF3FA']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        
-        {/* --- Cabeçalho --- */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
             <Ionicons name="arrow-back-circle-outline" size={32} color="#1C2E4A" />
           </TouchableOpacity>
-          
           <Text style={styles.headerTitle}>Adicionar Disciplinas e Atividades</Text>
-          
           <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.iconButton}>
             <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
           </TouchableOpacity>
         </View>
 
-        {/* --- Área Branca Arredondada --- */}
         <View style={styles.whiteContainer}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            
-            {/* --- Toggle Estilo Pílula --- */}
             <View style={styles.toggleContainer}>
               <TouchableOpacity 
-                style={[
-                  styles.toggleBtn, 
-                  abaAtiva === 'Disciplinas' ? styles.toggleBtnActive : styles.toggleBtnInactive
-                ]}
+                style={[styles.toggleBtn, abaAtiva === 'Disciplinas' ? styles.toggleBtnActive : styles.toggleBtnInactive]}
                 onPress={() => setAbaAtiva('Disciplinas')}
-                activeOpacity={0.8}
               >
-                <Text style={[
-                  styles.toggleText,
-                  abaAtiva === 'Disciplinas' ? styles.toggleTextActive : styles.toggleTextInactive
-                ]}>
-                  Disciplinas
-                </Text>
+                <Text style={[styles.toggleText, abaAtiva === 'Disciplinas' ? styles.toggleTextActive : styles.toggleTextInactive]}>Disciplinas</Text>
               </TouchableOpacity>
-              
               <TouchableOpacity 
-                style={[
-                  styles.toggleBtn, 
-                  abaAtiva === 'Atividades' ? styles.toggleBtnActive : styles.toggleBtnInactive
-                ]}
+                style={[styles.toggleBtn, abaAtiva === 'Atividades' ? styles.toggleBtnActive : styles.toggleBtnInactive]}
                 onPress={() => setAbaAtiva('Atividades')}
-                activeOpacity={0.8}
               >
-                <Text style={[
-                  styles.toggleText,
-                  abaAtiva === 'Atividades' ? styles.toggleTextActive : styles.toggleTextInactive
-                ]}>
-                  Atividades
-                </Text>
+                <Text style={[styles.toggleText, abaAtiva === 'Atividades' ? styles.toggleTextActive : styles.toggleTextInactive]}>Atividades</Text>
               </TouchableOpacity>
             </View>
 
-            {/* --- CONTEÚDO DINÂMICO DA ABA DISCIPLINAS --- */}
             {abaAtiva === 'Disciplinas' ? (
               <>
                 <View style={styles.formCard}>
                   <Text style={styles.label}>Código da disciplina:</Text>
-                  <TextInput 
-                    style={styles.input}
-                    value={codigo}
-                    onChangeText={setCodigo}
-                    placeholder="Ex: GCC123"
-                    placeholderTextColor="#A0A0A0"
-                  />
-                  
+                  <TextInput style={styles.input} value={codigo} onChangeText={setCodigo} placeholder="Ex: GCC123" placeholderTextColor="#A0A0A0" />
                   <Text style={styles.label}>Nome da disciplina:</Text>
-                  <TextInput 
-                    style={styles.input}
-                    value={nome}
-                    onChangeText={setNome}
-                    placeholder="Ex: Engenharia de Software"
-                    placeholderTextColor="#A0A0A0"
-                  />
+                  <TextInput style={styles.input} value={nome} onChangeText={setNome} placeholder="Ex: Engenharia de Software" placeholderTextColor="#A0A0A0" />
                 </View>
 
                 <View style={styles.actionRow}>
@@ -321,63 +326,38 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                   </TouchableOpacity>
                 </View>
 
-                {/* Lista Dinâmica de Disciplinas */}
                 <View style={styles.listCardDisciplinas}>
                   <Text style={styles.listTitle}>Codes e disciplinas adicionados</Text>
                   <View style={styles.separator} />
-                  
-                  {disciplinas.length === 0 ? (
-                    <Text style={styles.emptyText}>Nenhuma disciplina cadastrada.</Text>
-                  ) : (
+                  {disciplinas.length === 0 ? <Text style={styles.emptyText}>Nenhuma disciplina cadastrada.</Text> : (
                     <View style={styles.listGrid}>
-                      {disciplinas.map((item) => {
-                        const isSelecionado = disciplinasSelecionadas.includes(item.id);
-                        return (
-                          <View key={item.id} style={styles.listItem}>
-                            <Text style={styles.listItemText} numberOfLines={1}>
-                              {item.codigo} - {item.nome}
-                            </Text>
-                            <TouchableOpacity onPress={() => toggleSelecioneDisciplina(item.id)}>
-                              <MaterialCommunityIcons 
-                                name={isSelecionado ? "checkbox-marked" : "checkbox-blank-outline"} 
-                                size={18} 
-                                color="#2B4C9B" 
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        );
-                      })}
+                      {disciplinas.map((item) => (
+                        <View key={item.id} style={styles.listItem}>
+                          <Text style={styles.listItemText} numberOfLines={1}>{item.codigo} - {item.nome}</Text>
+                          <TouchableOpacity onPress={() => toggleSelecioneDisciplina(item.id)}>
+                            <MaterialCommunityIcons name={disciplinasSelecionadas.includes(item.id) ? "checkbox-marked" : "checkbox-blank-outline"} size={18} color="#2B4C9B" />
+                          </TouchableOpacity>
+                        </View>
+                      ))}
                     </View>
                   )}
                 </View>
               </>
             ) : (
               <>
-                {/* --- CONTEÚDO DINÂMICO DA ABA ATIVIDADES --- */}
                 <View style={styles.formCard}>
                   <Text style={styles.label}>Atividade:</Text>
-                  <TextInput 
-                    style={styles.input}
-                    value={nomeAtividade}
-                    onChangeText={setNomeAtividade}
-                    placeholder="Ex: Prova 1 ou Checklist"
-                    placeholderTextColor="#A0A0A0"
-                  />
+                  <TextInput style={styles.input} value={nomeAtividade} onChangeText={setNomeAtividade} placeholder="Ex: Prova 1 ou Checklist" placeholderTextColor="#A0A0A0" />
                   
                   <Text style={styles.label}>Data de entrega:</Text>
-                  <TextInput 
-                    style={styles.input}
-                    value={dataEntrega}
-                    onChangeText={setDataEntrega}
-                    placeholder="Ex: DD/MM/AAAA"
-                    placeholderTextColor="#A0A0A0"
-                  />
+                  <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
+                     <Text style={{ marginTop: 12, color: dataEntrega ? '#333' : '#A0A0A0' }}>{dataEntrega || 'Selecione a data'}</Text>
+                  </TouchableOpacity>
+                  {showPicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
 
                   <Text style={styles.label}>Vinculado a disciplina:</Text>
                   <TouchableOpacity style={styles.dropdownInput} onPress={() => setModalVisible(true)}>
-                    <Text style={{ color: disciplinaVinculada ? '#333' : '#A0A0A0' }}>
-                      {disciplinaVinculada || 'Selecione uma disciplina'}
-                    </Text>
+                    <Text style={{ color: disciplinaVinculada ? '#333' : '#A0A0A0' }}>{disciplinaVinculada || 'Selecione uma disciplina'}</Text>
                     <Feather name="chevron-down" size={20} color="#1C2E4A" />
                   </TouchableOpacity>
                 </View>
@@ -388,65 +368,25 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                   </TouchableOpacity>
                 </View>
 
-                {/* Lista Dinâmica de Atividades com Feedback Explicito de Status */}
                 <View style={styles.listCardAtividades}>
-                  {atividades.length === 0 ? (
-                    <Text style={styles.emptyText}>Nenhuma atividade cadastrada.</Text>
-                  ) : (
-                    atividades.map((item) => {
-                      const isSelecionadoExcluir = atividadesSelecionadas.includes(item.id);
-                      return (
-                        <View 
-                          key={item.id} 
-                          style={[
-                            styles.listItemAtividade, 
-                            item.feita && { backgroundColor: 'rgba(76, 175, 80, 0.15)' } // Fundo levemente verde se concluído
-                          ]}
-                        >
-                          {/* Botão Concluir com Feedback de Toque */}
-                          <TouchableOpacity 
-                            onPress={() => toggleConcluirAtividade(item.id)}
-                            style={styles.btnCheckboxConcluir}
-                            activeOpacity={0.7}
-                          >
-                            <MaterialCommunityIcons 
-                              name={item.feita ? "checkbox-marked-circle" : "checkbox-blank-circle-outline"} 
-                              size={24} 
-                              color={item.feita ? "#4CAF50" : "#2B4C9B"} 
-                            />
-                            <Text style={[
-                              styles.statusBadgeText, 
-                              { color: item.feita ? "#4CAF50" : "#2B4C9B" }
-                            ]}>
-                              {item.feita ? "Concluído" : "Marcar como feito"}
-                            </Text>
-                          </TouchableOpacity>
-
-                          {/* Texto da Atividade */}
-                          <Text style={[
-                            styles.listItemTextAtividade,
-                            item.feita && { textDecorationLine: 'line-through', color: '#777', opacity: 0.7 }
-                          ]}>
-                            {item.nome} . Entregar {item.data} - {item.disciplina}
-                          </Text>
-                          
-                          {/* Checkbox de Seleção para Deleção Direita */}
-                          <TouchableOpacity onPress={() => toggleSelecioneAtividade(item.id)} style={{ paddingLeft: 5 }}>
-                            <MaterialCommunityIcons 
-                              name={isSelecionadoExcluir ? "radiobox-marked" : "radiobox-blank"} 
-                              size={20} 
-                              color="#1C2E4A" 
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    })
-                  )}
+                  {atividades.map((item) => (
+                    <View key={item.id} style={[styles.listItemAtividade, item.feita && { backgroundColor: 'rgba(76, 175, 80, 0.15)' }]}>
+                      <TouchableOpacity onPress={() => toggleConcluirAtividade(item.id)} style={styles.btnCheckboxConcluir}>
+                        <MaterialCommunityIcons name={item.feita ? "checkbox-marked-circle" : "checkbox-blank-circle-outline"} size={24} color={item.feita ? "#4CAF50" : "#2B4C9B"} />
+                        <Text style={[styles.statusBadgeText, { color: item.feita ? "#4CAF50" : "#2B4C9B" }]}>{item.feita ? "Concluído" : "Marcar como feito"}</Text>
+                      </TouchableOpacity>
+                      <Text style={[styles.listItemTextAtividade, item.feita && { textDecorationLine: 'line-through', color: '#777' }]}>
+                        {item.nome} . Entregar {item.data} - {item.disciplina}
+                      </Text>
+                      <TouchableOpacity onPress={() => toggleSelecioneAtividade(item.id)}>
+                        <MaterialCommunityIcons name={atividadesSelecionadas.includes(item.id) ? "radiobox-marked" : "radiobox-blank"} size={20} color="#1C2E4A" />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                 </View>
               </>
             )}
 
-            {/* --- Botão Excluir Permanente --- */}
             <View style={styles.actionRow}>
               <TouchableOpacity style={styles.btnExcluir} onPress={handleExcluir}>
                 <Text style={styles.btnExcluirText}>Excluir Selecionados</Text>
@@ -456,7 +396,6 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
           </ScrollView>
         </View>
 
-        {/* --- Modal Seletor de Disciplinas Cadastradas --- */}
         <Modal transparent={true} visible={modalVisible} animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
@@ -465,19 +404,10 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                 data={disciplinas}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity 
-                    style={styles.modalItem} 
-                    onPress={() => {
-                      setDisciplinaVinculada(item.nome);
-                      setModalVisible(false);
-                    }}
-                  >
+                  <TouchableOpacity style={styles.modalItem} onPress={() => { setDisciplinaVinculada(item.nome); setModalVisible(false); }}>
                     <Text style={styles.modalItemText}>{item.codigo} - {item.nome}</Text>
                   </TouchableOpacity>
                 )}
-                ListEmptyComponent={
-                  <Text style={styles.modalEmptyText}>Cadastre disciplinas primeiro!</Text>
-                }
               />
               <TouchableOpacity style={styles.btnFecharModal} onPress={() => setModalVisible(false)}>
                 <Text style={styles.btnFecharModalText}>Fechar</Text>
@@ -496,28 +426,9 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 25 },
   headerTitle: { fontSize: 16, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center', flex: 1, paddingHorizontal: 10 },
   iconButton: { padding: 5 },
-  whiteContainer: {
-    flex: 1, backgroundColor: '#FFF', borderTopLeftRadius: 40, borderTopRightRadius: 40,
-    paddingTop: 30, paddingHorizontal: 20, elevation: 8, shadowColor: '#000',
-    shadowOpacity: 0.05, shadowRadius: 5, shadowOffset: { width: 0, height: -3 },
-  },
+  whiteContainer: { flex: 1, backgroundColor: '#FFF', borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, paddingHorizontal: 20, elevation: 8, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, shadowOffset: { width: 0, height: -3 } },
   scrollContent: { flexGrow: 1, paddingBottom: 40, alignItems: 'center' },
-  toggleContainer: {
-    flexDirection: 'row', 
-    backgroundColor: '#FFFFFF', 
-    borderRadius: 30, 
-    padding: 4, 
-    width: '90%', 
-    height: 54, 
-    marginBottom: 30, 
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3, 
-  },
+  toggleContainer: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 30, padding: 4, width: '90%', height: 54, marginBottom: 30, alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 3 },
   toggleBtn: { flex: 1, height: '100%', borderRadius: 25, justifyContent: 'center', alignItems: 'center' },
   toggleBtnActive: { backgroundColor: '#8BAEE0' },
   toggleBtnInactive: { backgroundColor: 'transparent' },
@@ -550,7 +461,6 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A', marginBottom: 15, textAlign: 'center' },
   modalItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#EEE' },
   modalItemText: { fontSize: 15, color: '#333' },
-  modalEmptyText: { textAlign: 'center', color: '#999', marginVertical: 20 },
   btnFecharModal: { backgroundColor: '#1B3668', marginTop: 15, padding: 12, borderRadius: 15, alignItems: 'center' },
   btnFecharModalText: { color: '#FFF', fontWeight: 'bold' }
 });

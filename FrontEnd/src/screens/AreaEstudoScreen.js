@@ -36,7 +36,7 @@ export default function AreaEstudoScreen({ navigation }) {
       </View>
 
       {/* --- Conteúdo Principal com Gradiente --- */}
-      <LinearGradient colors={['#2B4C9B', '#9DBCE0', '#EBF3FA']} style={styles.mainGradient}>
+      <LinearGradient colors={['#6482c8', '#9DBCE0', '#EBF3FA']} style={styles.mainGradient}>
         
         {/* --- LOGO --- */}
         <View style={styles.logoContainer}>

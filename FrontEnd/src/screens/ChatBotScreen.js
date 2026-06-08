@@ -13,23 +13,55 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+<<<<<<< HEAD
 import { aiApi, getApiErrorMessage } from '../services/api';
+=======
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+>>>>>>> abdab57 (Front Finalizado)
 
 export default function ChatBotScreen({ navigation }) {
-  
   const [menuVisivel, setMenuVisivel] = useState(false);
   const [mensagem, setMensagem] = useState('');
   const [mensagens, setMensagens] = useState([]);
 
-  
-  const handleCarregarDocumento = () => {
+  const handleCarregarDocumento = async () => {
     setMenuVisivel(false); 
-    Alert.alert("Documento", "Aqui abrirá a pasta do celular para escolher um PDF ou DOC.");
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled) {
+        Alert.alert("Sucesso", "Arquivo carregado: " + result.assets[0].name);
+        // Lógica para enviar o PDF para a API do Gemini aqui
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível carregar o documento.");
+    }
   };
 
-  const handleCarregarFoto = () => {
+  const handleCarregarFoto = async () => {
     setMenuVisivel(false); 
-    Alert.alert("Foto", "Aqui abrirá a galeria do celular para escolher uma imagem.");
+    
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert("Permissão", "Precisamos de acesso à sua galeria.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      Alert.alert("Sucesso", "Foto carregada com sucesso!");
+      // Lógica para enviar a imagem para a API do Gemini aqui
+    }
   };
 
   const handleEnviar = async () => {
@@ -76,11 +108,9 @@ export default function ChatBotScreen({ navigation }) {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardWrapper}
         >
-          {/* Usamos uma View (Wrapper) para segurar o input e o menu flutuante juntos */}
           <View style={styles.inputWrapper}>
             
             <View style={styles.inputContainer}>
-              {/* Botão de MAIS (+) que abre/fecha o menu */}
               <TouchableOpacity 
                 style={styles.iconPlus} 
                 onPress={() => setMenuVisivel(!menuVisivel)}
@@ -92,10 +122,13 @@ export default function ChatBotScreen({ navigation }) {
                 style={styles.input} 
                 placeholder="Peça suas dicas aqui" 
                 placeholderTextColor="#A0A0A0"
+<<<<<<< HEAD
                 autoFocus={true} 
                 value={mensagem}
                 onChangeText={setMensagem}
                 onSubmitEditing={handleEnviar}
+=======
+>>>>>>> abdab57 (Front Finalizado)
               />
               
               <TouchableOpacity style={styles.iconMic} onPress={handleEnviar}>
@@ -103,7 +136,7 @@ export default function ChatBotScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            {/* --- MENU FLUTUANTE (Só aparece se menuVisivel for TRUE) --- */}
+            {/* --- MENU FLUTUANTE --- */}
             {menuVisivel && (
               <View style={styles.floatingMenu}>
                 <TouchableOpacity style={styles.menuItem} onPress={handleCarregarDocumento}>
@@ -121,6 +154,7 @@ export default function ChatBotScreen({ navigation }) {
           </View>
         </KeyboardAvoidingView>
 
+<<<<<<< HEAD
         {/* --- Área de Mensagens --- */}
         <ScrollView style={styles.chatArea} contentContainerStyle={styles.chatContent}>
           {mensagens.map((item, index) => (
@@ -129,46 +163,30 @@ export default function ChatBotScreen({ navigation }) {
             </View>
           ))}
         </ScrollView>
+=======
+        <View style={styles.chatArea} />
+>>>>>>> abdab57 (Front Finalizado)
 
       </SafeAreaView>
     </LinearGradient>
   );
 }
 
-
 const styles = StyleSheet.create({
   mainGradient: { flex: 1 },
   container: { flex: 1 },
-  
-  
-  header: { 
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
-    paddingHorizontal: 20, paddingTop: 40, paddingBottom: 20 
-  },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 40, paddingBottom: 20 },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
-  robotAvatar: {
-    width: 50, height: 50, backgroundColor: '#8BAEE0', borderRadius: 25, 
-    justifyContent: 'center', alignItems: 'center', marginRight: 15,
-    elevation: 3, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 2 }
-  },
+  robotAvatar: { width: 50, height: 50, backgroundColor: '#8BAEE0', borderRadius: 25, justifyContent: 'center', alignItems: 'center', marginRight: 15, elevation: 3 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1C2E4A' },
   iconButton: { padding: 5 },
-
-  
-  keyboardWrapper: { 
-    width: '100%', paddingHorizontal: 20, marginTop: 10, zIndex: 10 
-  },
-  inputWrapper: {
-    position: 'relative', 
-  },
-  inputContainer: { 
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', 
-    borderRadius: 10, borderWidth: 1, borderColor: '#8DA4C4', 
-    paddingHorizontal: 10, height: 50,
-  },
+  keyboardWrapper: { width: '100%', paddingHorizontal: 20, marginTop: 10, zIndex: 10 },
+  inputWrapper: { position: 'relative' },
+  inputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', borderRadius: 10, borderWidth: 1, borderColor: '#8DA4C4', paddingHorizontal: 10, height: 50 },
   iconPlus: { paddingRight: 10, paddingVertical: 5 },
   input: { flex: 1, fontSize: 15, color: '#333', height: '100%' },
   iconMic: { paddingLeft: 10, paddingVertical: 5 },
+<<<<<<< HEAD
 
   
   floatingMenu: {
@@ -205,3 +223,10 @@ const styles = StyleSheet.create({
   botBubble: { backgroundColor: '#8BAEE0', alignSelf: 'flex-start' },
   messageText: { color: '#1C2E4A', fontWeight: '600', lineHeight: 18 }
 });
+=======
+  floatingMenu: { position: 'absolute', top: 55, left: 0, backgroundColor: '#8BAEE0', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10, minWidth: 170, elevation: 5 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
+  menuItemText: { marginLeft: 8, fontSize: 12, fontWeight: 'bold', color: '#1C2E4A' },
+  chatArea: { flex: 1, zIndex: 1 } 
+});
+>>>>>>> abdab57 (Front Finalizado)
