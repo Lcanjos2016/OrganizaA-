@@ -10,15 +10,10 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-<<<<<<< HEAD
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { userApi, getApiErrorMessage } from '../services/api';
-=======
 import {
   MaterialCommunityIcons,
   Feather,
 } from '@expo/vector-icons';
->>>>>>> abdab57 (Front Finalizado)
 
 export default function IA({
   navigation,
@@ -26,16 +21,6 @@ export default function IA({
   const [iaAtivada, setIaAtivada] =
     useState(true);
 
-<<<<<<< HEAD
-  const handleSalvar = async () => {
-    try {
-      await userApi.savePreferences({ iaAtiva: isEnabled });
-      Alert.alert("Sucesso", "Configurações da Inteligência Artificial salvas!");
-      navigation.goBack();
-    } catch (error) {
-      Alert.alert("Erro", getApiErrorMessage(error));
-    }
-=======
   useEffect(() => {
     carregar();
   }, []);
@@ -58,7 +43,6 @@ export default function IA({
     );
 
     navigation.goBack();
->>>>>>> abdab57 (Front Finalizado)
   };
 
   return (
@@ -176,10 +160,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-<<<<<<< HEAD
-  }
-});
-=======
     marginTop: 15,
     color: '#1C2E4A',
   },
@@ -205,4 +185,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
->>>>>>> abdab57 (Front Finalizado)

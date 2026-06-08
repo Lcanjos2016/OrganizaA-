@@ -61,33 +61,7 @@ export default function ProgressoScreen({ navigation }) {
           setTrabalhosPendentes(listaAtividades.length - concluidas);
           setConcluidasCount(concluidas);
 
-<<<<<<< HEAD
-          // 3. Faltas Consolidadas por Mês
-          let somaFaltasTotal = 0;
-          const mesesMapeados = ["Mar", "Abr", "Mai", "Jun"];
-          const contagemMeses = { "Mar": 0, "Abr": 0, "Mai": 0, "Jun": 0 };
-
-          const faltasFonte = listaFaltas.length > 0
-            ? listaFaltas
-            : listaDisciplinas.map(d => ({ quantidade: d.faltas || 0, mes: mesesMapeados[new Date().getMonth()] || "Jun" }));
-
-          faltasFonte.forEach(f => {
-            somaFaltasTotal += parseInt(f.quantidade || 0);
-            if (contagemMeses[f.mes] !== undefined) {
-              contagemMeses[f.mes] += parseInt(f.quantidade || 0);
-            }
-          });
-          setTotalFaltas(somaFaltasTotal);
-
-          setFaltasMensaisData({
-            labels: mesesMapeados,
-            datasets: [{ data: mesesMapeados.map(m => contagemMeses[m]) }]
-          });
-
-          // 4. Frequência
-=======
           // Frequência
->>>>>>> abdab57 (Front Finalizado)
           const aulasEstimadas = listaDisciplinas.length * 60 || 240;
           setPresencaData({ data: [Math.max(0, (aulasEstimadas - somaTotal) / aulasEstimadas)] });
 
@@ -190,16 +164,8 @@ const styles = StyleSheet.create({
   progressCenterText: { position: 'absolute', fontSize: 20, fontWeight: 'bold', color: '#1C2E4A' },
   resumoContainer: { backgroundColor: '#A9C4F0', borderRadius: 24, padding: 16 },
   resumoTitle: { fontSize: 15, fontWeight: 'bold', color: '#1C2E4A', marginBottom: 12, textAlign: 'center' },
-<<<<<<< HEAD
-  resumoCard: { backgroundColor: '#FFF', flex: 1, borderRadius: 16, padding: 8, alignItems: 'center', marginHorizontal: 3, elevation: 2, shadowColor: '#000', shadowOpacity: 0.03, minHeight: 92, justifyContent: 'center' },
-  resumoCardHeader: { flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'center', marginBottom: 4 },
-  resumoCardText: { fontSize: 10, fontWeight: 'bold', marginLeft: 4, textAlign: 'center' },
-  resumoCardNumber: { fontSize: 24, fontWeight: 'bold' }
-});
-=======
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   resumoCard: { backgroundColor: '#FFF', flex: 1, borderRadius: 16, padding: 15, alignItems: 'center', marginHorizontal: 5, elevation: 2 },
   resumoCardText: { fontSize: 11, fontWeight: 'bold', textAlign: 'center' },
   resumoCardNumber: { fontSize: 24, fontWeight: 'bold', marginTop: 5 }
 });
->>>>>>> abdab57 (Front Finalizado)

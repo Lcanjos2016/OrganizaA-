@@ -6,21 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-<<<<<<< HEAD
-import { disciplineApi, activityApi, getApiErrorMessage } from '../services/api';
-
-const normalizarData = (texto) => {
-  const valor = texto.trim();
-  const partes = valor.split('/');
-  if (partes.length === 3) {
-    const [dia, mes, ano] = partes;
-    return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
-  }
-  return valor;
-};
-=======
 import DateTimePicker from '@react-native-community/datetimepicker';
->>>>>>> abdab57 (Front Finalizado)
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
   const [abaAtiva, setAbaAtiva] = useState('Disciplinas');
@@ -43,27 +29,11 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
   const [atividadesSelecionadas, setAtividadesSelecionadas] = useState([]);
 
   useEffect(() => {
-<<<<<<< HEAD
-    const carregarDadosIniciais = async () => {
-      try {
-        const [disciplinasApi, atividadesApi] = await Promise.all([
-          disciplineApi.list(),
-          activityApi.list(),
-        ]);
-        setDisciplinas(disciplinasApi);
-        setAtividades(atividadesApi);
-        await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(disciplinasApi));
-        await AsyncStorage.setItem('@storage_atividades', JSON.stringify(atividadesApi));
-      } catch (error) {
-        console.log("Erro ao carregar dados iniciais:", error);
-      }
-=======
     const carregarDados = async () => {
       const d = await AsyncStorage.getItem('@storage_disciplinas');
       const a = await AsyncStorage.getItem('@storage_atividades');
       if (d) setDisciplinas(JSON.parse(d));
       if (a) setAtividades(JSON.parse(a));
->>>>>>> abdab57 (Front Finalizado)
     };
     carregarDados();
   }, []);
@@ -79,91 +49,6 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
     }
   };
 
-<<<<<<< HEAD
-  const salvarAtividadesNoStorage = async (novaLista) => {
-    try {
-      await AsyncStorage.setItem('@storage_atividades', JSON.stringify(novaLista));
-    } catch (error) {
-      console.log("Erro ao salvar atividades:", error);
-    }
-  };
-
-  // --- Ações de Salvar ---
-  const handleSalvar = async () => {
-    if (abaAtiva === 'Disciplinas') {
-      if (!codigo.trim() || !nome.trim()) {
-        Alert.alert("Aviso", "Por favor, preencha o código e o nome da disciplina.");
-        return;
-      }
-
-      try {
-        const novaDisciplina = await disciplineApi.create({
-          codigoDisciplina: codigo.trim().toUpperCase(),
-          nomeDisciplina: nome.trim(),
-        });
-        const listaAtualizada = [...disciplinas, novaDisciplina];
-        setDisciplinas(listaAtualizada);
-        salvarDisciplinasNoStorage(listaAtualizada);
-
-        Alert.alert("Sucesso", "Disciplina adicionada com sucesso!");
-        setCodigo('');
-        setNome('');
-      } catch (error) {
-        Alert.alert("Erro", getApiErrorMessage(error));
-      }
-    } else {
-      if (!nomeAtividade.trim() || !dataEntrega.trim() || !disciplinaVinculada) {
-        Alert.alert("Aviso", "Por favor, preencha todos os campos da atividade.");
-        return;
-      }
-
-      try {
-        const disciplina = disciplinas.find((item) => item.nome === disciplinaVinculada);
-        const novaAtividade = await activityApi.create({
-          topicoEstudo: nomeAtividade.trim(),
-          dataAtividade: normalizarData(dataEntrega),
-          idDisciplina: disciplina?.idDisciplina,
-          tipoAtividade: 'Entrega',
-          duracaoMinutos: 60,
-        });
-        const listaAtualizada = [...atividades, novaAtividade];
-        setAtividades(listaAtualizada);
-        salvarAtividadesNoStorage(listaAtualizada);
-
-        Alert.alert("Sucesso", "Atividade adicionada com sucesso!");
-        setNomeAtividade('');
-        setDataEntrega('');
-        setDisciplinaVinculada('');
-      } catch (error) {
-        Alert.alert("Erro", getApiErrorMessage(error));
-      }
-    }
-  };
-
-  // --- Alternar Status de Concluído da Atividade ---
-  const toggleConcluirAtividade = async (id) => {
-    const atividadeAtual = atividades.find((atividade) => atividade.id === id);
-    if (!atividadeAtual) return;
-
-    try {
-      const atualizada = await activityApi.update(id, { concluida: !atividadeAtual.feita });
-      const listaAtualizada = atividades.map(atividade => {
-      if (atividade.id === id) {
-        return atualizada;
-      }
-      return atividade;
-    });
-
-      setAtividades(listaAtualizada);
-      salvarAtividadesNoStorage(listaAtualizada);
-    } catch (error) {
-      Alert.alert("Erro", getApiErrorMessage(error));
-    }
-  };
-
-  // --- Gerenciamento de Seleção (Checkbox para Exclusão) ---
-=======
->>>>>>> abdab57 (Front Finalizado)
   const toggleSelecioneDisciplina = (id) => {
     if (disciplinasSelecionadas.includes(id)) {
       setDisciplinasSelecionadas(disciplinasSelecionadas.filter(item => item !== id));
@@ -190,65 +75,6 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
 
   const handleExcluir = () => {
     if (abaAtiva === 'Disciplinas') {
-<<<<<<< HEAD
-      if (disciplinasSelecionadas.length === 0) {
-        Alert.alert("Aviso", "Nenhuma disciplina selecionada para excluir.");
-        return;
-      }
-
-      Alert.alert(
-        "Confirmar Exclusão",
-        "Deseja mesmo excluir as disciplinas selecionadas?",
-        [
-          { text: "Cancelar", style: "cancel" },
-          { 
-            text: "Excluir", 
-            style: "destructive",
-            onPress: async () => {
-              try {
-                await Promise.all(disciplinasSelecionadas.map((id) => disciplineApi.remove(id)));
-                const listaFiltrada = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
-                setDisciplinas(listaFiltrada);
-                salvarDisciplinasNoStorage(listaFiltrada);
-                setDisciplinasSelecionadas([]); 
-                Alert.alert("Sucesso", "Disciplinas excluídas.");
-              } catch (error) {
-                Alert.alert("Erro", getApiErrorMessage(error));
-              }
-            }
-          }
-        ]
-      );
-    } else {
-      if (atividadesSelecionadas.length === 0) {
-        Alert.alert("Aviso", "Nenhuma atividade selecionada para excluir.");
-        return;
-      }
-
-      Alert.alert(
-        "Confirmar Exclusão",
-        "Deseja mesmo excluir as atividades selecionadas?",
-        [
-          { text: "Cancelar", style: "cancel" },
-          { 
-            text: "Excluir", 
-            style: "destructive",
-            onPress: async () => {
-              try {
-                await Promise.all(atividadesSelecionadas.map((id) => activityApi.remove(id)));
-                const listaFiltrada = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
-                setAtividades(listaFiltrada);
-                salvarAtividadesNoStorage(listaFiltrada);
-                setAtividadesSelecionadas([]); 
-                Alert.alert("Sucesso", "Atividades excluídas.");
-              } catch (error) {
-                Alert.alert("Erro", getApiErrorMessage(error));
-              }
-            }
-          }
-        ]
-      );
-=======
       const novas = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
       setDisciplinas(novas);
       setDisciplinasSelecionadas([]);
@@ -258,7 +84,6 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
       setAtividades(novas);
       setAtividadesSelecionadas([]);
       AsyncStorage.setItem('@storage_atividades', JSON.stringify(novas));
->>>>>>> abdab57 (Front Finalizado)
     }
   };
 

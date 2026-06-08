@@ -13,12 +13,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-<<<<<<< HEAD
-import { aiApi, getApiErrorMessage } from '../services/api';
-=======
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
->>>>>>> abdab57 (Front Finalizado)
 
 export default function ChatBotScreen({ navigation }) {
   const [menuVisivel, setMenuVisivel] = useState(false);
@@ -122,13 +118,6 @@ export default function ChatBotScreen({ navigation }) {
                 style={styles.input} 
                 placeholder="Peça suas dicas aqui" 
                 placeholderTextColor="#A0A0A0"
-<<<<<<< HEAD
-                autoFocus={true} 
-                value={mensagem}
-                onChangeText={setMensagem}
-                onSubmitEditing={handleEnviar}
-=======
->>>>>>> abdab57 (Front Finalizado)
               />
               
               <TouchableOpacity style={styles.iconMic} onPress={handleEnviar}>
@@ -154,18 +143,7 @@ export default function ChatBotScreen({ navigation }) {
           </View>
         </KeyboardAvoidingView>
 
-<<<<<<< HEAD
-        {/* --- Área de Mensagens --- */}
-        <ScrollView style={styles.chatArea} contentContainerStyle={styles.chatContent}>
-          {mensagens.map((item, index) => (
-            <View key={`${item.tipo}-${index}`} style={[styles.messageBubble, item.tipo === 'user' ? styles.userBubble : styles.botBubble]}>
-              <Text style={styles.messageText}>{item.texto}</Text>
-            </View>
-          ))}
-        </ScrollView>
-=======
         <View style={styles.chatArea} />
->>>>>>> abdab57 (Front Finalizado)
 
       </SafeAreaView>
     </LinearGradient>
@@ -186,47 +164,8 @@ const styles = StyleSheet.create({
   iconPlus: { paddingRight: 10, paddingVertical: 5 },
   input: { flex: 1, fontSize: 15, color: '#333', height: '100%' },
   iconMic: { paddingLeft: 10, paddingVertical: 5 },
-<<<<<<< HEAD
-
-  
-  floatingMenu: {
-    position: 'absolute',
-    top: 55, 
-    left: 0,
-    backgroundColor: '#8BAEE0', 
-    borderRadius: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    minWidth: 170,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 }
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  menuItemText: {
-    marginLeft: 8,
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#1C2E4A'
-  },
-
-  chatArea: { flex: 1, zIndex: 1, paddingHorizontal: 20, marginTop: 20 },
-  chatContent: { paddingBottom: 30 },
-  messageBubble: { padding: 12, borderRadius: 12, marginBottom: 10, maxWidth: '88%' },
-  userBubble: { backgroundColor: '#FFF', alignSelf: 'flex-end' },
-  botBubble: { backgroundColor: '#8BAEE0', alignSelf: 'flex-start' },
-  messageText: { color: '#1C2E4A', fontWeight: '600', lineHeight: 18 }
-});
-=======
   floatingMenu: { position: 'absolute', top: 55, left: 0, backgroundColor: '#8BAEE0', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10, minWidth: 170, elevation: 5 },
   menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   menuItemText: { marginLeft: 8, fontSize: 12, fontWeight: 'bold', color: '#1C2E4A' },
   chatArea: { flex: 1, zIndex: 1 } 
 });
->>>>>>> abdab57 (Front Finalizado)

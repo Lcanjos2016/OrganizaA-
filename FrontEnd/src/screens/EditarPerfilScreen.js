@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView, 
-  KeyboardAvoidingView, 
-=======
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -18,7 +7,6 @@ import {
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
->>>>>>> abdab57 (Front Finalizado)
   Platform,
   Alert,
   Image,
@@ -32,29 +20,6 @@ import { userApi, getApiErrorMessage } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
-<<<<<<< HEAD
-  useFocusEffect(
-    useCallback(() => {
-      const carregarPerfil = async () => {
-        try {
-          const user = await userApi.me();
-          setNome(user?.nome_usuario || '');
-        } catch (error) {
-          console.log("Erro ao carregar perfil:", error);
-        }
-      };
-      carregarPerfil();
-    }, [])
-  );
-  
-  const handleSalvar = async () => {
-    try {
-      await userApi.update({ nomeUsuario: nome });
-      Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-      navigation.goBack();
-    } catch (error) {
-      Alert.alert("Erro", getApiErrorMessage(error));
-=======
 export default function EditarPerfilScreen({ navigation }) {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -135,7 +100,6 @@ export default function EditarPerfilScreen({ navigation }) {
         'Erro',
         'Não foi possível salvar os dados.'
       );
->>>>>>> abdab57 (Front Finalizado)
     }
   };
 
@@ -372,10 +336,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
-<<<<<<< HEAD
-  }
-});
-=======
   },
 });
->>>>>>> abdab57 (Front Finalizado)

@@ -56,21 +56,10 @@ export default function PreferenciaScreen({ navigation }) {
   const salvarPreferencias = async () => {
     try {
       const dados = { avatar, curso, disciplina, atividades };
-<<<<<<< HEAD
-      await Promise.all([
-        userApi.update({ curso, avatar }),
-        userApi.savePreferences({ dados }),
-        AsyncStorage.setItem('@user_prefs', JSON.stringify(dados)),
-      ]);
-      navigation.navigate('MainHome', { screen: 'HomeTab' });
-    } catch (error) {
-      Alert.alert("Erro", getApiErrorMessage(error));
-=======
       await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
       navigation.navigate('MainHome', { screen: 'HomeTab' });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível salvar.");
->>>>>>> abdab57 (Front Finalizado)
     }
   };
 

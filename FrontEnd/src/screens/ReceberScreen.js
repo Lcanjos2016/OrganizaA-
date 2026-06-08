@@ -10,15 +10,10 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-<<<<<<< HEAD
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { userApi, getApiErrorMessage } from '../services/api';
-=======
 import {
   MaterialCommunityIcons,
   Feather,
 } from '@expo/vector-icons';
->>>>>>> abdab57 (Front Finalizado)
 
 export default function Receber({ navigation }) {
   const [notificacoes, setNotificacoes] =
@@ -45,18 +40,7 @@ export default function Receber({ navigation }) {
       JSON.stringify(notificacoes)
     );
 
-<<<<<<< HEAD
-  const handleSalvar = async () => {
-    try {
-      await userApi.savePreferences({ notificacoesAtivas: isEnabled });
-      Alert.alert("Sucesso", "Preferência de notificação salva!");
-      navigation.goBack();
-    } catch (error) {
-      Alert.alert("Erro", getApiErrorMessage(error));
-    }
-=======
     navigation.goBack();
->>>>>>> abdab57 (Front Finalizado)
   };
 
   return (
@@ -160,10 +144,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-<<<<<<< HEAD
-  }
-});
-=======
     marginLeft: 10,
     color: '#1C2E4A',
   },
@@ -205,4 +185,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
->>>>>>> abdab57 (Front Finalizado)
