@@ -67,6 +67,7 @@ export default function MontarCronogramaScreen({ navigation }) {
       Alert.alert("Erro", getApiErrorMessage(error));
     }
   };
+
   const handleEsvaziar = () => {
     const linhasLimpas = tableRows.map(row => ({
       ...row, seg: '', ter: '', qua: '', qui: '', sex: ''
@@ -120,35 +121,33 @@ export default function MontarCronogramaScreen({ navigation }) {
                     placeholderTextColor="#A5C0DF"
                   />
                 </View>
+                {/* Modificado maxLength para 6 em todas as células de dias */}
                 <View style={styles.tableCell}>
-                  <TextInput style={styles.cellInput} value={row.seg} onChangeText={(text) => handleInputChange(text, index, 'seg')} keyboardType="numeric" maxLength={2} />
+                  <TextInput style={styles.cellInput} value={row.seg} onChangeText={(text) => handleInputChange(text, index, 'seg')} maxLength={6} />
                 </View>
                 <View style={styles.tableCell}>
-                  <TextInput style={styles.cellInput} value={row.ter} onChangeText={(text) => handleInputChange(text, index, 'ter')} keyboardType="numeric" maxLength={2} />
+                  <TextInput style={styles.cellInput} value={row.ter} onChangeText={(text) => handleInputChange(text, index, 'ter')} maxLength={6} />
                 </View>
                 <View style={styles.tableCell}>
-                  <TextInput style={styles.cellInput} value={row.qua} onChangeText={(text) => handleInputChange(text, index, 'qua')} keyboardType="numeric" maxLength={2} />
+                  <TextInput style={styles.cellInput} value={row.qua} onChangeText={(text) => handleInputChange(text, index, 'qua')} maxLength={6} />
                 </View>
                 <View style={styles.tableCell}>
-                  <TextInput style={styles.cellInput} value={row.qui} onChangeText={(text) => handleInputChange(text, index, 'qui')} keyboardType="numeric" maxLength={2} />
+                  <TextInput style={styles.cellInput} value={row.qui} onChangeText={(text) => handleInputChange(text, index, 'qui')} maxLength={6} />
                 </View>
                 <View style={[styles.tableCell, { borderRightWidth: 0 }]}>
-                  <TextInput style={styles.cellInput} value={row.sex} onChangeText={(text) => handleInputChange(text, index, 'sex')} keyboardType="numeric" maxLength={2} />
+                  <TextInput style={styles.cellInput} value={row.sex} onChangeText={(text) => handleInputChange(text, index, 'sex')} maxLength={6} />
                 </View>
               </View>
             ))}
           </View>
 
-          {/* --- Botões de Ação --- */}
+          {/* --- Botões de Ação (Apenas Salvar e Esvaziar) --- */}
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity style={[styles.actionBtn, styles.btnSalvar]} onPress={handleSalvar}>
               <Text style={[styles.actionBtnText, { color: '#FFF' }]}>Salvar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.actionBtn, styles.btnEsvaziar]} onPress={handleEsvaziar}>
               <Text style={[styles.actionBtnText, { color: '#1B3668' }]}>Esvaziar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, styles.btnEditar]}>
-              <Text style={[styles.actionBtnText, { color: '#1B3668' }]}>Editar</Text>
             </TouchableOpacity>
           </View>
 
@@ -204,7 +203,6 @@ const styles = StyleSheet.create({
   actionBtn: { flex: 1, paddingVertical: 10, borderRadius: 20, alignItems: 'center', marginHorizontal: 5, elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 2 } },
   btnSalvar: { backgroundColor: '#1B3668' },
   btnEsvaziar: { backgroundColor: '#5AD6B6' },
-  btnEditar: { backgroundColor: '#FFFFFF' },
   actionBtnText: { fontWeight: 'bold', fontSize: 14 },
   legendContainer: { backgroundColor: '#FFF', borderRadius: 15, padding: 15, marginBottom: 10, elevation: 4, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
   legendTitle: { color: '#2B4C9B', fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginBottom: 5 },
