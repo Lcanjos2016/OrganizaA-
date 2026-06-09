@@ -5,8 +5,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { activityApi, disciplineApi, getApiErrorMessage } from '../services/api';
 
 export default function DisciplinaAtividadeScreen({ navigation }) {
   const [abaAtiva, setAbaAtiva] = useState('Disciplinas');
@@ -30,10 +30,16 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
 
   useEffect(() => {
     const carregarDados = async () => {
-      const d = await AsyncStorage.getItem('@storage_disciplinas');
-      const a = await AsyncStorage.getItem('@storage_atividades');
-      if (d) setDisciplinas(JSON.parse(d));
-      if (a) setAtividades(JSON.parse(a));
+      try {
+        const [disciplinasApi, atividadesApi] = await Promise.all([
+          disciplineApi.list(),
+          activityApi.list(),
+        ]);
+        setDisciplinas(disciplinasApi);
+        setAtividades(atividadesApi);
+      } catch (error) {
+        Alert.alert('Erro', getApiErrorMessage(error));
+      }
     };
     carregarDados();
   }, []);
@@ -65,43 +71,65 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
     }
   };
 
-  const toggleConcluirAtividade = (id) => {
-    const novasAtividades = atividades.map(item => 
-      item.id === id ? { ...item, feita: !item.feita } : item
-    );
-    setAtividades(novasAtividades);
-    AsyncStorage.setItem('@storage_atividades', JSON.stringify(novasAtividades));
-  };
-
-  const handleExcluir = () => {
-    if (abaAtiva === 'Disciplinas') {
-      const novas = disciplinas.filter(item => !disciplinasSelecionadas.includes(item.id));
-      setDisciplinas(novas);
-      setDisciplinasSelecionadas([]);
-      AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(novas));
-    } else {
-      const novas = atividades.filter(item => !atividadesSelecionadas.includes(item.id));
-      setAtividades(novas);
-      setAtividadesSelecionadas([]);
-      AsyncStorage.setItem('@storage_atividades', JSON.stringify(novas));
+  const toggleConcluirAtividade = async (id) => {
+    try {
+      const atual = atividades.find((item) => item.id === id);
+      const atualizada = await activityApi.update(id, { concluida: !atual?.feita });
+      setAtividades((lista) => lista.map((item) => item.id === id ? atualizada : item));
+    } catch (error) {
+      Alert.alert('Erro', getApiErrorMessage(error));
     }
   };
 
-  const handleSalvar = () => {
+  const handleExcluir = async () => {
+    try {
+      if (abaAtiva === 'Disciplinas') {
+        await Promise.all(disciplinasSelecionadas.map((id) => disciplineApi.remove(id)));
+        setDisciplinas((lista) => lista.filter(item => !disciplinasSelecionadas.includes(item.id)));
+        setDisciplinasSelecionadas([]);
+      } else {
+        await Promise.all(atividadesSelecionadas.map((id) => activityApi.remove(id)));
+        setAtividades((lista) => lista.filter(item => !atividadesSelecionadas.includes(item.id)));
+        setAtividadesSelecionadas([]);
+      }
+    } catch (error) {
+      Alert.alert('Erro', getApiErrorMessage(error));
+    }
+  };
+
+  const handleSalvar = async () => {
     if (abaAtiva === 'Disciplinas') {
       if (!codigo.trim() || !nome.trim()) return Alert.alert("Aviso", "Preencha os campos.");
-      const nova = { id: Math.random().toString(), codigo: codigo.toUpperCase(), nome, faltas: 0 };
-      const lista = [...disciplinas, nova];
-      setDisciplinas(lista);
-      AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
-      setCodigo(''); setNome('');
+      try {
+        const nova = await disciplineApi.create({
+          codigoDisciplina: codigo.trim().toUpperCase(),
+          nomeDisciplina: nome.trim(),
+        });
+        setDisciplinas((lista) => [...lista, nova]);
+        setCodigo('');
+        setNome('');
+      } catch (error) {
+        return Alert.alert('Erro', getApiErrorMessage(error));
+      }
     } else {
       if (!nomeAtividade.trim() || !dataEntrega.trim() || !disciplinaVinculada) return Alert.alert("Aviso", "Preencha todos os campos.");
-      const nova = { id: Math.random().toString(), nome: nomeAtividade, data: dataEntrega, disciplina: disciplinaVinculada, feita: false };
-      const lista = [...atividades, nova];
-      setAtividades(lista);
-      AsyncStorage.setItem('@storage_atividades', JSON.stringify(lista));
-      setNomeAtividade(''); setDataEntrega(''); setDisciplinaVinculada('');
+      try {
+        const disciplina = disciplinas.find((item) => item.nome === disciplinaVinculada);
+        const [dia, mes, ano] = dataEntrega.split('/');
+        const nova = await activityApi.create({
+          idDisciplina: disciplina?.idDisciplina,
+          dataAtividade: `${ano}-${mes}-${dia}`,
+          topicoEstudo: nomeAtividade.trim(),
+          tipoAtividade: 'Atividade',
+          duracaoMinutos: 60,
+        });
+        setAtividades((lista) => [...lista, nova]);
+        setNomeAtividade('');
+        setDataEntrega('');
+        setDisciplinaVinculada('');
+      } catch (error) {
+        return Alert.alert('Erro', getApiErrorMessage(error));
+      }
     }
     Alert.alert("Sucesso", "Salvo com sucesso!");
   };

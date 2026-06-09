@@ -102,6 +102,14 @@ CREATE TABLE IF NOT EXISTS logs_requisicoes_ia (
   data_requisicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS notificacoes_removidas (
+  id_notificacao_removida SERIAL PRIMARY KEY,
+  id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+  chave_notificacao VARCHAR(255) NOT NULL,
+  removida_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT notificacao_removida_unica UNIQUE (id_usuario, chave_notificacao)
+);
+
 ALTER TABLE IF EXISTS disciplinas
   ADD COLUMN IF NOT EXISTS criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
@@ -121,3 +129,5 @@ ALTER TABLE IF EXISTS atividades
 CREATE INDEX IF NOT EXISTS idx_disciplinas_usuario ON disciplinas(id_usuario);
 CREATE INDEX IF NOT EXISTS idx_atividades_usuario_data ON atividades(id_usuario, data_atividade);
 CREATE INDEX IF NOT EXISTS idx_lembretes_usuario_data ON lembretes(id_usuario, data_hora);
+CREATE INDEX IF NOT EXISTS idx_notificacoes_removidas_usuario
+  ON notificacoes_removidas(id_usuario);

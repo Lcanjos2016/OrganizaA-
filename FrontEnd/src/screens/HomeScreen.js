@@ -9,7 +9,6 @@ import {
   Image,
 } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -31,29 +30,31 @@ export default function HomeScreen({ navigation }) {
 
   const carregarDados = async () => {
     try {
-      const prefs = await AsyncStorage.getItem('@user_prefs');
-      const perfilStorage = await AsyncStorage.getItem('@storage_user_data');
-      const disciplinasStorage = await AsyncStorage.getItem('@storage_disciplinas');
-      const atividadesStorage = await AsyncStorage.getItem('@storage_atividades');
-      const faltasStorage = await AsyncStorage.getItem('@storage_faltas');
-      const notasStorage = await AsyncStorage.getItem('@storage_notas_progresso');
+      const [prefs, usuario, listaDisciplinas, listaAtividades] = await Promise.all([
+        userApi.preferences(),
+        userApi.me(),
+        disciplineApi.list(),
+        activityApi.list(),
+      ]);
+      setUserData({ ...(prefs?.dados || {}), curso: usuario.curso || '' });
+      setPerfil({
+        nome: usuario.nome_usuario,
+        email: usuario.email,
+        foto: prefs?.dados?.foto || null,
+      });
+      setDisciplinas(listaDisciplinas);
+      setAtividades(listaAtividades);
 
-      const dadosPerfil = perfilStorage ? JSON.parse(perfilStorage) : {};
-      
-      setUserData(prefs ? JSON.parse(prefs) : {});
-      setPerfil(dadosPerfil);
-      setDisciplinas(disciplinasStorage ? JSON.parse(disciplinasStorage) : []);
-      setAtividades(atividadesStorage ? JSON.parse(atividadesStorage) : []);
-
-      const listaNotas = notasStorage ? JSON.parse(notasStorage) : [];
+      const listaNotas = listaDisciplinas.filter((item) => item.notaFinal);
       if (listaNotas.length > 0) {
-        const soma = listaNotas.reduce((acc, item) => acc + Number(item.media || 0), 0);
+        const soma = listaNotas.reduce((acc, item) => acc + Number(item.notaFinal || 0), 0);
         setMediaGeral((soma / listaNotas.length).toFixed(1));
+      } else {
+        setMediaGeral(0);
       }
 
-      const listaFaltas = faltasStorage ? JSON.parse(faltasStorage) : [];
-      const totalFaltas = listaFaltas.reduce((acc, item) => acc + Number(item.quantidade || 0), 0);
-      const aulasEstimadas = (disciplinasStorage ? JSON.parse(disciplinasStorage).length : 0) * 60 || 240;
+      const totalFaltas = listaDisciplinas.reduce((acc, item) => acc + Number(item.faltas || 0), 0);
+      const aulasEstimadas = listaDisciplinas.length * 60 || 240;
       setPresenca(Math.max(0, ((aulasEstimadas - totalFaltas) / aulasEstimadas) * 100).toFixed(0));
     } catch (error) {
       console.error(error);

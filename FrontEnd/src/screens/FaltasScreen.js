@@ -11,7 +11,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disciplineApi, getApiErrorMessage } from '../services/api';
 
 export default function FaltasScreen({ navigation, route }) {
@@ -35,7 +34,6 @@ export default function FaltasScreen({ navigation, route }) {
         try {
           const lista = await disciplineApi.list();
           setDisciplinas(lista);
-          await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
         } catch (error) {
           console.log("Erro ao carregar disciplinas na tela de faltas:", error);
         }
@@ -74,7 +72,6 @@ export default function FaltasScreen({ navigation, route }) {
 
   const handleSalvar = async () => {
     try {
-      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(disciplinas));
       await Promise.all(
         disciplinas.map((disciplina) =>
           disciplineApi.saveAbsences(disciplina.id, {
@@ -93,7 +90,6 @@ export default function FaltasScreen({ navigation, route }) {
         mes: mesAtualNome
       }));
 
-      await AsyncStorage.setItem('@storage_faltas', JSON.stringify(listaFaltasMensais));
       Alert.alert("Sucesso", "Faltas salvas e sincronizadas com o Progresso!");
     } catch (error) {
       Alert.alert("Erro", getApiErrorMessage(error));

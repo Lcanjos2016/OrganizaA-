@@ -12,7 +12,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disciplineApi, scheduleApi, getApiErrorMessage } from '../services/api';
 
 export default function MontarCronogramaScreen({ navigation }) {
@@ -36,7 +35,6 @@ export default function MontarCronogramaScreen({ navigation }) {
         try {
           const lista = await disciplineApi.list();
           setDisciplinas(lista);
-          await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(lista));
         } catch (error) {
           console.log("Erro ao carregar disciplinas no cronograma:", error);
         }

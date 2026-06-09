@@ -19,17 +19,13 @@ import {
 
 import { useFocusEffect } from '@react-navigation/native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { navigateGlobal } from '../navigation/NavigationService';
+import { activityApi, disciplineApi, notificationApi } from '../services/api';
 
 export default function NotificacaoScreen() {
 
   const [notificacoes, setNotificacoes] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const STORAGE_NOTIFICACOES_REMOVIDAS =
-    '@notificacoes_removidas';
 
   useFocusEffect(
     useCallback(() => {
@@ -44,49 +40,35 @@ export default function NotificacaoScreen() {
           // STORAGE
           // =========================
 
-          const atividadesStorage =
-            await AsyncStorage.getItem(
-              '@storage_atividades'
-            );
-
-          const faltasStorage =
-            await AsyncStorage.getItem(
-              '@storage_faltas'
-            );
-
-          const notasStorage =
-            await AsyncStorage.getItem(
-              '@storage_notas_progresso'
-            );
-
-          const removidasStorage =
-            await AsyncStorage.getItem(
-              STORAGE_NOTIFICACOES_REMOVIDAS
-            );
+          const [
+            listaAtividades,
+            disciplinas,
+            notificacoesRemovidas,
+          ] = await Promise.all([
+            activityApi.list(),
+            disciplineApi.list(),
+            notificationApi.dismissed(),
+          ]);
 
           // =========================
           // CONVERSÃO
           // =========================
 
-          const listaAtividades =
-            atividadesStorage
-              ? JSON.parse(atividadesStorage)
-              : [];
-
           const listaFaltas =
-            faltasStorage
-              ? JSON.parse(faltasStorage)
-              : [];
+            disciplinas.map(item => ({
+              id: item.id,
+              disciplina: item.nome,
+              quantidade: item.faltas || 0,
+            }));
 
           const listaNotas =
-            notasStorage
-              ? JSON.parse(notasStorage)
-              : [];
-
-          const notificacoesRemovidas =
-            removidasStorage
-              ? JSON.parse(removidasStorage)
-              : [];
+            disciplinas
+              .filter(item => item.notaFinal !== '')
+              .map(item => ({
+                id: item.id,
+                disciplina: item.nome,
+                media: item.notaFinal,
+              }));
 
           const notificacoesGeradas = [];
 
@@ -624,23 +606,8 @@ export default function NotificacaoScreen() {
 
       try {
 
-        const storage =
-          await AsyncStorage.getItem(
-            STORAGE_NOTIFICACOES_REMOVIDAS
-          );
-
-        const lista =
-          storage
-            ? JSON.parse(
-                storage
-              )
-            : [];
-
-        lista.push(id);
-
-        await AsyncStorage.setItem(
-          STORAGE_NOTIFICACOES_REMOVIDAS,
-          JSON.stringify(lista)
+        await notificationApi.dismiss(
+          String(id)
         );
 
         setNotificacoes(

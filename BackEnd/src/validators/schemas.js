@@ -181,6 +181,14 @@ const reminderCreate = z.object({
   query: z.any().optional(),
 });
 
+const notificationKey = z.object({
+  body: z.object({
+    chave: z.string().min(1).max(255),
+  }),
+  params: z.any().optional(),
+  query: z.any().optional(),
+});
+
 module.exports = {
   idParam,
   register,
@@ -199,4 +207,5 @@ module.exports = {
   horarioUpdate,
   reminder,
   reminderCreate,
+  notificationKey,
 };

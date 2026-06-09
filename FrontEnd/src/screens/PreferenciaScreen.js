@@ -3,7 +3,6 @@ import {
   View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, 
   SafeAreaView, Alert, KeyboardAvoidingView, Platform 
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { userApi, getApiErrorMessage } from '../services/api';
@@ -30,18 +29,7 @@ export default function PreferenciaScreen({ navigation }) {
           if (prefs.dados.atividades) setAtividades(prefs.dados.atividades);
         }
 
-        if (user?.curso) {
-          setCurso(user.curso);
-        } else {
-          const jsonValue = await AsyncStorage.getItem('@user_prefs');
-          if (jsonValue != null) {
-            const dados = JSON.parse(jsonValue);
-            setAvatar(dados.avatar || 'robot');
-            setCurso(dados.curso || '');
-            setDisciplina(dados.disciplina || '');
-            if (dados.atividades) setAtividades(dados.atividades);
-          }
-        }
+        setCurso(user?.curso || '');
       } catch (error) {
         console.log("Erro ao carregar preferências:", error);
       }
@@ -56,7 +44,10 @@ export default function PreferenciaScreen({ navigation }) {
   const salvarPreferencias = async () => {
     try {
       const dados = { avatar, curso, disciplina, atividades };
-      await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
+      await Promise.all([
+        userApi.update({ curso, avatar }),
+        userApi.savePreferences({ dados }),
+      ]);
       navigation.navigate('MainHome', { screen: 'HomeTab' });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível salvar.");

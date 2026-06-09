@@ -14,10 +14,8 @@ import {
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import { userApi, getApiErrorMessage } from '../services/api';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function EditarPerfilScreen({ navigation }) {
@@ -31,17 +29,13 @@ export default function EditarPerfilScreen({ navigation }) {
 
   const carregarDados = async () => {
     try {
-      const dados = await AsyncStorage.getItem(
-        '@storage_user_data'
-      );
-
-      if (dados) {
-        const usuario = JSON.parse(dados);
-
-        setNome(usuario.nome || '');
-        setEmail(usuario.email || '');
-        setFoto(usuario.foto || null);
-      }
+      const [usuario, prefs] = await Promise.all([
+        userApi.me(),
+        userApi.preferences(),
+      ]);
+      setNome(usuario.nome_usuario || '');
+      setEmail(usuario.email || '');
+      setFoto(prefs?.dados?.foto || null);
     } catch (error) {
       console.log(error);
     }
@@ -78,16 +72,13 @@ export default function EditarPerfilScreen({ navigation }) {
 
   const handleSalvar = async () => {
     try {
-      const dadosUsuario = {
-        nome,
-        email,
-        foto,
-      };
-
-      await AsyncStorage.setItem(
-        '@storage_user_data',
-        JSON.stringify(dadosUsuario)
-      );
+      const prefs = await userApi.preferences();
+      await Promise.all([
+        userApi.update({ nomeUsuario: nome }),
+        userApi.savePreferences({
+          dados: { ...(prefs?.dados || {}), foto },
+        }),
+      ]);
 
       Alert.alert(
         'Sucesso',
@@ -201,7 +192,7 @@ export default function EditarPerfilScreen({ navigation }) {
               placeholder="Digite seu e-mail"
               placeholderTextColor="#8DA4C4"
               value={email}
-              onChangeText={setEmail}
+              editable={false}
             />
           </View>
 

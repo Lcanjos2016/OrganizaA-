@@ -1,8 +1,7 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3333/api';
-const TOKEN_KEY = '@organizaae_token';
+let authToken = null;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -48,32 +47,27 @@ export function mapAtividade(row) {
   };
 }
 
-api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem(TOKEN_KEY);
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use((config) => {
+  if (authToken) {
+    config.headers.Authorization = `Bearer ${authToken}`;
   }
   return config;
 });
 
-export async function setAuthToken(token) {
-  if (token) {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-  } else {
-    await AsyncStorage.removeItem(TOKEN_KEY);
-  }
+export function setAuthToken(token) {
+  authToken = token || null;
 }
 
 export const authApi = {
   async register(data) {
     const response = await api.post('/auth/register', data);
-    await setAuthToken(response.data.token);
+    setAuthToken(response.data.token);
     return response.data;
   },
 
   async login(email, senha) {
     const response = await api.post('/auth/login', { email, senha });
-    await setAuthToken(response.data.token);
+    setAuthToken(response.data.token);
     return response.data;
   },
 
@@ -139,6 +133,12 @@ export const aiApi = {
 
 export const dashboardApi = {
   summary: () => api.get('/dashboard').then((response) => response.data),
+};
+
+export const notificationApi = {
+  dismissed: () => api.get('/notifications/dismissed').then((response) => response.data),
+  dismiss: (chave) => api.post('/notifications/dismissed', { chave }),
+  restore: (chave) => api.delete('/notifications/dismissed', { data: { chave } }),
 };
 
 export default api;

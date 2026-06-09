@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { ProgressChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disciplineApi, activityApi } from '../services/api';
 
 export default function ProgressoScreen({ navigation }) {
@@ -22,18 +21,10 @@ export default function ProgressoScreen({ navigation }) {
       const processarMetricas = async () => {
         try {
           setLoading(true);
-          const [disciplinasRemotas, atividadesRemotas] = await Promise.all([
-            disciplineApi.list().catch(() => null),
-            activityApi.list().catch(() => null),
+          const [listaDisciplinas, listaAtividades] = await Promise.all([
+            disciplineApi.list(),
+            activityApi.list(),
           ]);
-          const resDisciplinas = await AsyncStorage.getItem('@storage_disciplinas');
-          const resAtividades = await AsyncStorage.getItem('@storage_atividades');
-          const resFaltas = await AsyncStorage.getItem('@storage_faltas');
-          const resNotas = await AsyncStorage.getItem('@storage_notas_progresso');
-
-          const listaDisciplinas = disciplinasRemotas || (resDisciplinas ? JSON.parse(resDisciplinas) : []);
-          const listaAtividades = atividadesRemotas || (resAtividades ? JSON.parse(resAtividades) : []);
-          const listaFaltas = resFaltas ? JSON.parse(resFaltas) : [];
           const listaNotas = listaDisciplinas
             .filter(d => d.notaFinal && d.situacao)
             .map(d => ({
@@ -47,14 +38,16 @@ export default function ProgressoScreen({ navigation }) {
           setMediasPorDisciplina(listaNotas);
 
           // Faltas
-          const contagem = {};
-          let somaTotal = 0;
-          listaFaltas.forEach(f => {
-            const qtd = parseInt(f.quantidade || 0);
-            contagem[f.disciplina] = (contagem[f.disciplina] || 0) + qtd;
-            somaTotal += qtd;
-          });
-          setFaltasPorDisciplina(Object.keys(contagem).map(nome => ({ nome, total: contagem[nome] })));
+          const somaTotal = listaDisciplinas.reduce(
+            (total, item) => total + Number(item.faltas || 0),
+            0
+          );
+          setFaltasPorDisciplina(
+            listaDisciplinas.map((item) => ({
+              nome: item.nome,
+              total: Number(item.faltas || 0),
+            }))
+          );
 
           // Atividades
           const concluidas = listaAtividades.filter(a => a.feita === true || a.status === 'concluida').length;

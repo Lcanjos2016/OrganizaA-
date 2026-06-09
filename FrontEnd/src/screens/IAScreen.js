@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   MaterialCommunityIcons,
   Feather,
 } from '@expo/vector-icons';
+import { userApi } from '../services/api';
 
 export default function IA({
   navigation,
@@ -26,22 +26,12 @@ export default function IA({
   }, []);
 
   const carregar = async () => {
-    const valor =
-      await AsyncStorage.getItem(
-        '@ia_ativada'
-      );
-
-    if (valor !== null) {
-      setIaAtivada(JSON.parse(valor));
-    }
+    const prefs = await userApi.preferences();
+    setIaAtivada(prefs?.ia_ativa ?? true);
   };
 
   const salvar = async () => {
-    await AsyncStorage.setItem(
-      '@ia_ativada',
-      JSON.stringify(iaAtivada)
-    );
-
+    await userApi.savePreferences({ iaAtiva: iaAtivada });
     navigation.goBack();
   };
 

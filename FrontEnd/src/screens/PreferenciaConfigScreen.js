@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, SafeAreaView, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { userApi, getApiErrorMessage } from '../services/api';
@@ -20,11 +19,33 @@ export default function PreferenciaConfigScreen({ navigation }) {
     setAtividades({ ...atividades, [key]: !atividades[key] });
   };
 
+  useEffect(() => {
+    const carregar = async () => {
+      try {
+        const [prefs, user] = await Promise.all([
+          userApi.preferences(),
+          userApi.me(),
+        ]);
+        const dados = prefs?.dados || {};
+        setAvatar(dados.avatar || user.avatar || 'robot');
+        setCurso(user.curso || '');
+        setDisciplina(dados.disciplina || '');
+        if (dados.atividades) setAtividades(dados.atividades);
+      } catch (error) {
+        Alert.alert('Erro', getApiErrorMessage(error));
+      }
+    };
+    carregar();
+  }, []);
+
   const salvarPreferencias = async () => {
     try {
       const dados = { avatar, curso, disciplina, atividades };
-      await AsyncStorage.setItem('@user_prefs', JSON.stringify(dados));
-      navigation.navigate('Home');
+      await Promise.all([
+        userApi.update({ curso, avatar }),
+        userApi.savePreferences({ dados }),
+      ]);
+      navigation.navigate('MainHome', { screen: 'HomeTab' });
     } catch (error) {
       Alert.alert("Erro", getApiErrorMessage(error));
     }

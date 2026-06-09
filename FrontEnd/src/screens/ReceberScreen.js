@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   MaterialCommunityIcons,
   Feather,
 } from '@expo/vector-icons';
+import { userApi } from '../services/api';
 
 export default function Receber({ navigation }) {
   const [notificacoes, setNotificacoes] =
@@ -24,22 +24,12 @@ export default function Receber({ navigation }) {
   }, []);
 
   const carregar = async () => {
-    const valor =
-      await AsyncStorage.getItem(
-        '@notificacoes_ativadas'
-      );
-
-    if (valor !== null) {
-      setNotificacoes(JSON.parse(valor));
-    }
+    const prefs = await userApi.preferences();
+    setNotificacoes(prefs?.notificacoes_ativas ?? true);
   };
 
   const salvar = async () => {
-    await AsyncStorage.setItem(
-      '@notificacoes_ativadas',
-      JSON.stringify(notificacoes)
-    );
-
+    await userApi.savePreferences({ notificacoesAtivas: notificacoes });
     navigation.goBack();
   };
 

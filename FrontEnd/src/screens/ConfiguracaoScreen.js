@@ -17,7 +17,6 @@ import {
 } from '@expo/vector-icons';
 
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi, userApi } from '../services/api';
 
 export default function ConfiguracaoScreen({ navigation }) {
@@ -37,50 +36,18 @@ export default function ConfiguracaoScreen({ navigation }) {
     useCallback(() => {
       const carregarDados = async () => {
         try {
-          const dadosUsuario =
-            await AsyncStorage.getItem(
-              '@storage_user_data'
-            );
-
-          if (dadosUsuario) {
-            setUserData(JSON.parse(dadosUsuario));
-          }
-
-          const prefs =
-            await AsyncStorage.getItem(
-              '@user_prefs'
-            );
-
-          if (prefs) {
-            const dadosPrefs =
-              JSON.parse(prefs);
-
-            setCurso(
-              dadosPrefs.curso || ''
-            );
-          }
-
-          const statusIA =
-            await AsyncStorage.getItem(
-              '@ia_ativada'
-            );
-
-          if (statusIA !== null) {
-            setIaAtivada(
-              JSON.parse(statusIA)
-            );
-          }
-
-          const statusNotif =
-            await AsyncStorage.getItem(
-              '@notificacoes_ativadas'
-            );
-
-          if (statusNotif !== null) {
-            setNotificacoesAtivadas(
-              JSON.parse(statusNotif)
-            );
-          }
+          const [usuario, prefs] = await Promise.all([
+            userApi.me(),
+            userApi.preferences(),
+          ]);
+          setUserData({
+            nome: usuario.nome_usuario,
+            email: usuario.email,
+            foto: prefs?.dados?.foto || null,
+          });
+          setCurso(usuario.curso || '');
+          setIaAtivada(prefs?.ia_ativa ?? true);
+          setNotificacoesAtivadas(prefs?.notificacoes_ativas ?? true);
         } catch (error) {
           console.log(error);
         }
@@ -129,11 +96,10 @@ export default function ConfiguracaoScreen({ navigation }) {
             </View>
 
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(
-                  'Login'
-                )
-              }
+              onPress={() => {
+                authApi.logout();
+                navigation.navigate('Login');
+              }}
             >
               <MaterialCommunityIcons
                 name="logout"

@@ -21,6 +21,16 @@ npm run dev
 
 A API fica em `http://localhost:3333`.
 
+Swagger:
+
+```text
+http://localhost:3333/api-docs
+```
+
+No Swagger, execute primeiro `POST /api/auth/login`, copie o campo `token`,
+clique em **Authorize** e cole somente o token. As demais rotas protegidas
+passarao a enviar automaticamente o header `Authorization: Bearer`.
+
 No seu Windows, o PostgreSQL 18 pode estar rodando na porta `5433`. Se aparecer erro de senha, troque `SUA_SENHA` pela senha definida na instalação do PostgreSQL:
 
 ```env

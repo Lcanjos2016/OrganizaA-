@@ -14,7 +14,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native'; // Atualizado para o padrão useFocusEffect
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { disciplineApi, getApiErrorMessage } from '../services/api';
@@ -38,7 +37,6 @@ export default function SituacaoNotasScreen({ navigation }) {
     try {
       const listaDisciplinas = await disciplineApi.list();
       setDisciplinas(listaDisciplinas);
-      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinas));
         
         // Se já houver uma disciplina previamente selecionada, atualiza as notas dela
         if (disciplinaSelecionada) {
@@ -88,24 +86,6 @@ export default function SituacaoNotasScreen({ navigation }) {
   };
 
   // --- Sincronizador Central para o Gráfico de Progresso ---
-  const sincronizarComProgresso = async (listaDisciplinas) => {
-    try {
-      // Filtra apenas as disciplinas que já possuem notas calculadas
-      const dadosProgresso = listaDisciplinas
-        .filter(d => d.notaFinal && d.situacao)
-        .map(d => ({
-          id: d.id,
-          disciplina: d.nome,
-          media: parseFloat(d.notaFinal) || 0,
-          situacao: d.situacao
-        }));
-      
-      await AsyncStorage.setItem('@storage_notas_progresso', JSON.stringify(dadosProgresso));
-    } catch (e) {
-      console.log("Erro ao sincronizar dados de progresso:", e);
-    }
-  };
-
   // --- Função de Cálculo e Persistência ---
   const calcularESalvar = async () => {
     if (!disciplinaSelecionada) {
@@ -146,11 +126,6 @@ export default function SituacaoNotasScreen({ navigation }) {
         nota2: nota2 || 0,
         nota3: nota3 || 0,
       });
-
-      await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinasAtualizada));
-      
-      // Sincroniza o snapshot plano de notas para o gráfico da tela de Progresso
-      await sincronizarComProgresso(listaDisciplinasAtualizada);
 
       setDisciplinas(listaDisciplinasAtualizada);
       const selecionadaAtualizada = listaDisciplinasAtualizada.find(d => d.id === disciplinaSelecionada.id);
@@ -195,11 +170,6 @@ export default function SituacaoNotasScreen({ navigation }) {
                 nota2: 0,
                 nota3: 0,
               });
-              await AsyncStorage.setItem('@storage_disciplinas', JSON.stringify(listaDisciplinasAtualizada));
-              
-              // Atualiza também o histórico do progresso removendo esta disciplina limpa
-              await sincronizarComProgresso(listaDisciplinasAtualizada);
-
               setDisciplinas(listaDisciplinasAtualizada);
               
               if (disciplinaSelecionada && disciplinaSelecionada.id === idDisciplina) {

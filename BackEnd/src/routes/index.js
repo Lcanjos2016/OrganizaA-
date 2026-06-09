@@ -11,6 +11,7 @@ const scheduleController = require('../controllers/scheduleController');
 const reminderController = require('../controllers/reminderController');
 const aiController = require('../controllers/aiController');
 const dashboardController = require('../controllers/dashboardController');
+const notificationController = require('../controllers/notificationController');
 
 const router = Router();
 
@@ -59,5 +60,16 @@ router.delete('/reminders/:id', validate(schemas.idParam), reminderController.re
 router.post('/ai/progress', aiController.analyzeProgress);
 router.get('/ai/logs', aiController.listLogs);
 router.get('/dashboard', dashboardController.summary);
+router.get('/notifications/dismissed', notificationController.listDismissed);
+router.post(
+  '/notifications/dismissed',
+  validate(schemas.notificationKey),
+  notificationController.dismiss
+);
+router.delete(
+  '/notifications/dismissed',
+  validate(schemas.notificationKey),
+  notificationController.restore
+);
 
 module.exports = router;
