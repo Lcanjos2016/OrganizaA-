@@ -51,12 +51,12 @@ export default function FaltasScreen({ navigation, route }) {
           if (valor > 0) {
             if (totalFaltas === 16) {
               Alert.alert(
-                "🚨 REPROVADO", 
+                " REPROVADO", 
                 `Você atingiu ${totalFaltas} faltas em ${disciplina.nome} e foi reprovado por infrequência!`
               );
             } else if (totalFaltas >= 12 && totalFaltas < 16) {
               Alert.alert(
-                "⚠️ ATENÇÃO", 
+                " ATENÇÃO", 
                 `Você está com ${totalFaltas} faltas em ${disciplina.nome}. O limite máximo é 15. Se chegar a 16, você será reprovado!`
               );
             }
