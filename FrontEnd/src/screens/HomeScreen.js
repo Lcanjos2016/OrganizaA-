@@ -97,7 +97,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.resumoRow}>
             <View style={styles.miniCard}>
               <Text style={styles.numero}>{mediaGeral}</Text>
-              <Text style={styles.label}>Média_Notas</Text>
+              <Text style={styles.label}>Média Geral</Text>
             </View>
             <View style={styles.miniCard}>
               <Text style={styles.numero}>{presenca}%</Text>

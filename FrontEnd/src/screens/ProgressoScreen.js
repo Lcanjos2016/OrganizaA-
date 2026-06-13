@@ -1,16 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator
+  View, Text, StyleSheet, SafeAreaView, ScrollView, ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ProgressChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
 import { disciplineApi, activityApi } from '../services/api';
 
 export default function ProgressoScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
-  const [mediasPorDisciplina, setMediasPorDisciplina] = useState([]); // Nova lista de médias
+  const [mediasPorDisciplina, setMediasPorDisciplina] = useState([]); 
   const [faltasPorDisciplina, setFaltasPorDisciplina] = useState([]);
   const [trabalhosPendentes, setTrabalhosPendentes] = useState(0);
   const [concluidasCount, setConcluidasCount] = useState(0);
@@ -34,10 +34,8 @@ export default function ProgressoScreen({ navigation }) {
               situacao: d.situacao,
             }));
 
-          // Processar médias por disciplina
           setMediasPorDisciplina(listaNotas);
 
-          // Faltas
           const somaTotal = listaDisciplinas.reduce(
             (total, item) => total + Number(item.faltas || 0),
             0
@@ -49,12 +47,10 @@ export default function ProgressoScreen({ navigation }) {
             }))
           );
 
-          // Atividades
           const concluidas = listaAtividades.filter(a => a.feita === true || a.status === 'concluida').length;
           setTrabalhosPendentes(listaAtividades.length - concluidas);
           setConcluidasCount(concluidas);
 
-          // Frequência
           const aulasEstimadas = listaDisciplinas.length * 60 || 240;
           setPresencaData({ data: [Math.max(0, (aulasEstimadas - somaTotal) / aulasEstimadas)] });
 
@@ -66,17 +62,17 @@ export default function ProgressoScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      
+      {/* --- Cabeçalho --- */}
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
           <MaterialCommunityIcons name="school-outline" size={32} color="#1C2E4A" />
           <Text style={styles.headerTitle}>Progresso</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.exitButton}>
-          <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
-        </TouchableOpacity>
       </View>
 
-      <LinearGradient colors={['#7895E8', '#A9C4F0', '#A9C4F0']} style={styles.mainGradient}>
+      {/* MODIFICADO: O gradiente agora começa com a cor branca (#FFF) para sumir com a faixa azul escuro de trás */}
+      <LinearGradient colors={['#FFF', '#A9C4F0', '#A9C4F0']} style={styles.mainGradient}>
         <View style={styles.whitePanel}>
           {loading ? <ActivityIndicator size="large" color="#3A5CA8" /> : (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -140,13 +136,28 @@ export default function ProgressoScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // ... (mantive os estilos anteriores para garantir a consistência)
-  container: { flex: 1, backgroundColor: '#e9dcdc' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 40, paddingBottom: 15, backgroundColor: '#FFF' },
+  container: { flex: 1, backgroundColor: '#FFF' }, 
+  header: { 
+    flexDirection: 'row', 
+    justifyContent: 'flex-start', 
+    alignItems: 'center', 
+    paddingHorizontal: 20, 
+    paddingTop: 40, 
+    paddingBottom: 15, 
+    backgroundColor: '#FFF' 
+  },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
   headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#1C2E4A', marginLeft: 10 },
   mainGradient: { flex: 1 },
-  whitePanel: { flex: 1, backgroundColor: '#eef3fb', borderTopLeftRadius: 40, borderTopRightRadius: 40, marginTop: 10, paddingHorizontal: 15, paddingTop: 22 },
+  whitePanel: { 
+    flex: 1, 
+    backgroundColor: '#eef3fb', 
+    borderTopLeftRadius: 40, 
+    borderTopRightRadius: 40, 
+    marginTop: 10, // MANTIDO: O espaço de 10px original foi preservado!
+    paddingHorizontal: 15, 
+    paddingTop: 22 
+  },
   scrollContent: { paddingBottom: 30 },
   fullCard: { backgroundColor: '#FFF', borderRadius: 20, padding: 20, marginBottom: 15, elevation: 2 },
   cardTitle: { fontSize: 11, fontWeight: 'bold', color: '#1C2E4A', marginBottom: 10, opacity: 0.6 },

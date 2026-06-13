@@ -12,8 +12,8 @@ import {
   FlatList
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native'; // Atualizado para o padrão useFocusEffect
+import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { disciplineApi, getApiErrorMessage } from '../services/api';
@@ -86,7 +86,6 @@ export default function SituacaoNotasScreen({ navigation }) {
   };
 
   // --- Sincronizador Central para o Gráfico de Progresso ---
-  // --- Função de Cálculo e Persistência ---
   const calcularESalvar = async () => {
     if (!disciplinaSelecionada) {
       Alert.alert("Aviso", "Por favor, selecione uma disciplina.");
@@ -104,7 +103,6 @@ export default function SituacaoNotasScreen({ navigation }) {
     const media = soma / notasValidas.length;
     const notaFinalFormatada = media.toFixed(2);
 
-    // Critério de aprovação conforme a regra do seu layout (Média 8.0)
     const situacao = media >= 8.0 ? 'Aprovado' : 'Prova Final';
 
     const listaDisciplinasAtualizada = disciplinas.map(d => {
@@ -261,9 +259,8 @@ export default function SituacaoNotasScreen({ navigation }) {
         
         <Text style={styles.headerTitle}>Situação de Notas</Text>
         
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.iconButton}>
-          <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
-        </TouchableOpacity>
+        {/* Espaçador invisível para equilibrar o título com o botão de voltar à esquerda */}
+        <View style={styles.headerSpacer} />
       </View>
 
       {/* --- Conteúdo Principal com Gradiente --- */}
@@ -405,8 +402,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
     paddingHorizontal: 20, paddingTop: 35, paddingBottom: 15, backgroundColor: '#FFF' 
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#2B4C9B' },
-  iconButton: { padding: 5 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#2B4C9B', textAlign: 'center', flex: 1 },
+  iconButton: { padding: 5, width: 42, alignItems: 'flex-start' },
+  headerSpacer: { width: 42 },
   mainGradient: { 
     flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, 
     paddingTop: 20, paddingHorizontal: 20 

@@ -2,20 +2,16 @@ import React from 'react';
 import { 
   View, 
   Text, 
-  TextInput, 
   TouchableOpacity, 
   StyleSheet, 
   SafeAreaView, 
-  KeyboardAvoidingView, 
-  Platform,
   Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function AreaEstudoScreen({ navigation }) {
   
-  const handleSair = () => navigation.navigate('Login');
   const irParaCronograma = () => navigation.navigate('Cronograma');
   const irParaDisciplinas = () => navigation.navigate('DisciplinaAtividade');
   const irParaFaltas = () => navigation.navigate('Faltas');
@@ -24,15 +20,18 @@ export default function AreaEstudoScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       
-      {/* --- Cabeçalho --- */}
+      {/* --- Cabeçalho (Sem botão de sair) --- */}
       <View style={styles.header}>
+        {/* Espaçador do lado esquerdo para ajudar na centralização */}
+        <View style={styles.headerSpacer} />
+        
         <View style={styles.headerTitleContainer}>
           <MaterialCommunityIcons name="bookshelf" size={28} color="#2B4C9B" />
           <Text style={styles.headerTitle}>Área de Estudos</Text>
         </View>
-        <TouchableOpacity onPress={handleSair} style={styles.iconButton}>
-          <MaterialCommunityIcons name="exit-to-app" size={28} color="#2B4C9B" />
-        </TouchableOpacity>
+        
+        {/* Espaçador do lado direito substituindo o botão de logout */}
+        <View style={styles.headerSpacer} />
       </View>
 
       {/* --- Conteúdo Principal com Gradiente --- */}
@@ -64,34 +63,6 @@ export default function AreaEstudoScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* --- Barra de Pesquisa / Dicas (Agora é um botão!) --- */}
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardWrapper}>
-          
-          {/* Transformado em TouchableOpacity para levar à tela do ChatBot */}
-          <TouchableOpacity 
-            style={styles.chatInputContainer} 
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('ChatBot')}
-          >
-            <View style={styles.chatAvatar}>
-              <MaterialCommunityIcons name="robot-outline" size={24} color="#2B4C9B" />
-            </View>
-            
-            {/* editable={false} evita que o teclado abra aqui e garante a navegação */}
-            <TextInput 
-              style={styles.input} 
-              placeholder="Peça suas dicas aqui" 
-              placeholderTextColor="#798C9C"
-              editable={false} 
-              pointerEvents="none" 
-            />
-            
-            <View style={{ paddingRight: 10 }}>
-              <Feather name="mic" size={22} color="#2B4C9B" />
-            </View>
-          </TouchableOpacity>
-          
-        </KeyboardAvoidingView>
       </LinearGradient>
 
     </SafeAreaView>
@@ -101,19 +72,14 @@ export default function AreaEstudoScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 10, backgroundColor: '#FFF' },
-  headerTitleContainer: { flexDirection: 'row', alignItems: 'center' },
+  headerTitleContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flex: 1 },
   headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#2B4C9B', marginLeft: 10 },
-  iconButton: { padding: 5 },
-  mainGradient: { flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, paddingTop: 15, paddingHorizontal: 25, alignItems: 'center' },
+  headerSpacer: { width: 38 }, // Garante que o título permaneça alinhado no meio certinho
+  mainGradient: { flex: 1, borderTopLeftRadius: 35, borderTopRightRadius: 35, paddingTop: 25, paddingHorizontal: 25, alignItems: 'center' },
   logoContainer: { alignItems: 'center', marginBottom: 10 },
-  logoImage: { width: 90, height: 90, resizeMode: 'contain', marginBottom: 5, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 4, elevation: 4 },
-  subtitle: { fontSize: 18, fontWeight: '600', color: '#FFF', marginBottom: 15 },
-  menuContainer: { width: '100%' },
-  menuButton: { backgroundColor: '#A5C0DF', paddingVertical: 16, paddingHorizontal: 20, borderRadius: 15, marginBottom: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 4.5, elevation: 6 },
-  menuButtonText: { color: '#1E3A8A', fontSize: 16, fontWeight: 'bold' },
-  keyboardWrapper: { width: '100%', marginTop: 'auto', marginBottom: 20 }, // Margem ajustada para ficar confortável com as abas nativas
-  
-  chatInputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#8DA4C4', borderRadius: 30, padding: 6, backgroundColor: 'rgba(255, 255, 255, 0.4)' },
-  chatAvatar: { width: 44, height: 44, backgroundColor: '#A5C0DF', borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  input: { flex: 1, paddingVertical: 10, color: '#2B4C9B', fontSize: 15, fontWeight: '500' }
+  logoImage: { width: 100, height: 100, resizeMode: 'contain', marginBottom: 5, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 4, elevation: 4 },
+  subtitle: { fontSize: 18, fontWeight: '600', color: '#FFF', marginBottom: 20 },
+  menuContainer: { width: '100%', flex: 1, justifyContent: 'center', paddingBottom: 40 },
+  menuButton: { backgroundColor: '#A5C0DF', paddingVertical: 18, paddingHorizontal: 20, borderRadius: 15, marginBottom: 15, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 4.5, elevation: 6 },
+  menuButtonText: { color: '#1E3A8A', fontSize: 17, fontWeight: 'bold' }
 });

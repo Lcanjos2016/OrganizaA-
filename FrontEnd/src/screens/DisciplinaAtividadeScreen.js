@@ -141,10 +141,11 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
             <Ionicons name="arrow-back-circle-outline" size={32} color="#1C2E4A" />
           </TouchableOpacity>
+          
           <Text style={styles.headerTitle}>Adicionar Disciplinas e Atividades</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.iconButton}>
-            <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
-          </TouchableOpacity>
+          
+          {/* View vazia para manter o alinhamento centralizado do título */}
+          <View style={styles.iconButton} />
         </View>
 
         <View style={styles.whiteContainer}>
@@ -203,6 +204,7 @@ export default function DisciplinaAtividadeScreen({ navigation }) {
                   <TextInput style={styles.input} value={nomeAtividade} onChangeText={setNomeAtividade} placeholder="Ex: Prova 1 ou Checklist" placeholderTextColor="#A0A0A0" />
                   
                   <Text style={styles.label}>Data de entrega:</Text>
+                  
                   <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
                      <Text style={{ marginTop: 12, color: dataEntrega ? '#333' : '#A0A0A0' }}>{dataEntrega || 'Selecione a data'}</Text>
                   </TouchableOpacity>
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 25 },
   headerTitle: { fontSize: 16, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center', flex: 1, paddingHorizontal: 10 },
-  iconButton: { padding: 5 },
+  iconButton: { padding: 5, width: 42, height: 42, justifyContent: 'center', alignItems: 'center' }, // Adicionado tamanho fixo para simetria ideal
   whiteContainer: { flex: 1, backgroundColor: '#FFF', borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, paddingHorizontal: 20, elevation: 8, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, shadowOffset: { width: 0, height: -3 } },
   scrollContent: { flexGrow: 1, paddingBottom: 40, alignItems: 'center' },
   toggleContainer: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 30, padding: 4, width: '90%', height: 54, marginBottom: 30, alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 3 },

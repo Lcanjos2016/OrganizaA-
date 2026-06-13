@@ -56,11 +56,17 @@ export default function PreferenciaConfigScreen({ navigation }) {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
+          {/* HEADER MODIFICADO: Sem botão de logout */}
           <View style={styles.headerRow}>
-            <Text style={styles.mainTitle}>Preferências</Text>
+            {/* Novo botão de retorno adicionado */}
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <MaterialCommunityIcons name="logout" size={28} color="#1a237e" />
+              <MaterialCommunityIcons name="arrow-left" size={28} color="#1a237e" />
             </TouchableOpacity>
+
+            <Text style={styles.mainTitle}>Preferências</Text>
+            
+            {/* Elemento invisível para balancear o space-between do flexbox */}
+            <View style={{ width: 28 }} />
           </View>
 
           {/* Fundo azulado unificado */}

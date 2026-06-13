@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { disciplineApi, getApiErrorMessage } from '../services/api';
 
@@ -17,12 +17,11 @@ export default function FaltasScreen({ navigation, route }) {
   const [abaAtiva, setAbaAtiva] = useState('Adicionar');
   const [disciplinas, setDisciplinas] = useState([]);
 
-  // Se vier um parâmetro pedindo para abrir em uma aba específica (ex: vindo de uma notificação)
+  // Se vier um parâmetro pedindo para abrir em uma aba específica
   useFocusEffect(
     useCallback(() => {
       if (route.params?.abaInicial) {
         setAbaAtiva(route.params.abaInicial);
-        // Limpa os parâmetros para não ficar preso na aba ao navegar depois
         navigation.setParams({ abaInicial: undefined });
       }
     }, [route.params])
@@ -80,16 +79,6 @@ export default function FaltasScreen({ navigation, route }) {
         )
       );
       
-      const mesesNomes = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-      const mesAtualNome = mesesNomes[new Date().getMonth()];
-
-      const listaFaltasMensais = disciplinas.map(d => ({
-        id: d.id,
-        disciplina: d.nome,
-        quantidade: d.faltas || 0,
-        mes: mesAtualNome
-      }));
-
       Alert.alert("Sucesso", "Faltas salvas e sincronizadas com o Progresso!");
     } catch (error) {
       Alert.alert("Erro", getApiErrorMessage(error));
@@ -106,12 +95,13 @@ export default function FaltasScreen({ navigation, route }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
           <Ionicons name="arrow-back-circle-outline" size={32} color="#1C2E4A" />
         </TouchableOpacity>
+        
         <Text style={styles.headerTitle}>
           {abaAtiva === 'Adicionar' ? 'Adicionar Faltas' : 'Visualizar Faltas'}
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.iconButton}>
-          <MaterialCommunityIcons name="exit-to-app" size={28} color="#1C2E4A" />
-        </TouchableOpacity>
+        
+        {/* Espaçador lateral para manter o título centralizado perfeitamente */}
+        <View style={styles.headerSpacer} />
       </View>
 
       <LinearGradient 
@@ -159,15 +149,18 @@ export default function FaltasScreen({ navigation, route }) {
                           ) : null}
                         </View>
                         
+                        {/* Contador com os botões invertidos: [-] Valor [+] */}
                         <View style={styles.counterContainer}>
-                          <TouchableOpacity style={styles.counterBtn} onPress={() => alterarFaltas(item.id, 1)}>
-                            <Text style={styles.counterSymbol}>+</Text>
+                          <TouchableOpacity style={styles.counterBtn} onPress={() => alterarFaltas(item.id, -1)}>
+                            <Text style={styles.counterSymbol}>-</Text>
                           </TouchableOpacity>
+                          
                           <View style={styles.counterValueBox}>
                             <Text style={styles.counterValue}>{qtdFaltas}</Text>
                           </View>
-                          <TouchableOpacity style={styles.counterBtn} onPress={() => alterarFaltas(item.id, -1)}>
-                            <Text style={styles.counterSymbol}>-</Text>
+                          
+                          <TouchableOpacity style={styles.counterBtn} onPress={() => alterarFaltas(item.id, 1)}>
+                            <Text style={styles.counterSymbol}>+</Text>
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -264,8 +257,9 @@ export default function FaltasScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 35, paddingBottom: 25, backgroundColor: '#FFF' },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center' },
-  iconButton: { padding: 5 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#1C2E4A', textAlign: 'center', flex: 1 },
+  iconButton: { padding: 5, width: 42, alignItems: 'flex-start' },
+  headerSpacer: { width: 42 },
   gradientContainer: { flex: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, paddingHorizontal: 20, elevation: 8, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: -3 } },
   scrollContent: { flexGrow: 1, alignItems: 'center', paddingBottom: 40 },
   toggleContainer: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 30, borderWidth: 1, borderColor: '#A5C0DF', width: '90%', height: 50, marginBottom: 40, elevation: 5, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, overflow: 'hidden' },

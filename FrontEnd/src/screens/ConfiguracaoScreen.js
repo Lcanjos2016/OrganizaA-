@@ -17,7 +17,7 @@ import {
 } from '@expo/vector-icons';
 
 import { useFocusEffect } from '@react-navigation/native';
-import { authApi, userApi } from '../services/api';
+import { userApi } from '../services/api'; 
 
 export default function ConfiguracaoScreen({ navigation }) {
   const [userData, setUserData] = useState({
@@ -26,10 +26,7 @@ export default function ConfiguracaoScreen({ navigation }) {
     foto: null,
   });
 
-  const [iaAtivada, setIaAtivada] = useState(true);
-  const [notificacoesAtivadas, setNotificacoesAtivadas] =
-    useState(true);
-
+  const [notificacoesAtivadas, setNotificacoesAtivadas] = useState(true);
   const [curso, setCurso] = useState('');
 
   useFocusEffect(
@@ -46,7 +43,6 @@ export default function ConfiguracaoScreen({ navigation }) {
             foto: prefs?.dados?.foto || null,
           });
           setCurso(usuario.curso || '');
-          setIaAtivada(prefs?.ia_ativa ?? true);
           setNotificacoesAtivadas(prefs?.notificacoes_ativas ?? true);
         } catch (error) {
           console.log(error);
@@ -69,63 +65,29 @@ export default function ConfiguracaoScreen({ navigation }) {
         style={styles.mainGradient}
       >
         <ScrollView
-          contentContainerStyle={
-            styles.scrollContent
-          }
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* HEADER */}
-
           <View style={styles.header}>
-            <View
-              style={
-                styles.headerTitleContainer
-              }
-            >
+            <View style={styles.headerTitleContainer}>
               <Feather
                 name="settings"
                 size={28}
                 color="#1C2E4A"
               />
-
-              <Text
-                style={styles.headerTitle}
-              >
-                Configurações
-              </Text>
+              <Text style={styles.headerTitle}>Configurações</Text>
             </View>
-
-            <TouchableOpacity
-              onPress={() => {
-                authApi.logout();
-                navigation.navigate('Login');
-              }}
-            >
-              <MaterialCommunityIcons
-                name="logout"
-                size={28}
-                color="#1C2E4A"
-              />
-            </TouchableOpacity>
           </View>
 
           {/* PERFIL */}
-
           <View style={styles.card}>
             <View style={styles.profileRow}>
-              <View
-                style={
-                  styles.avatarContainer
-                }
-              >
+              <View style={styles.avatarContainer}>
                 {userData?.foto ? (
                   <Image
-                    source={{
-                      uri: userData.foto,
-                    }}
-                    style={
-                      styles.avatarImage
-                    }
+                    source={{ uri: userData.foto }}
+                    style={styles.avatarImage}
                   />
                 ) : (
                   <Ionicons
@@ -136,47 +98,25 @@ export default function ConfiguracaoScreen({ navigation }) {
                 )}
               </View>
 
-              <View
-                style={styles.profileInfo}
-              >
-                <Text
-                  style={
-                    styles.profileName
-                  }
-                >
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>
                   {userData.nome}
                 </Text>
-
-                <Text
-                  style={
-                    styles.profileEmail
-                  }
-                >
+                <Text style={styles.profileEmail}>
                   {userData.email}
                 </Text>
               </View>
 
               <TouchableOpacity
                 style={styles.btnEditar}
-                onPress={() =>
-                  navigation.navigate(
-                    'EditarPerfil'
-                  )
-                }
+                onPress={() => navigation.navigate('EditarPerfil')}
               >
-                <Text
-                  style={
-                    styles.btnEditarText
-                  }
-                >
-                  Editar
-                </Text>
+                <Text style={styles.btnEditarText}>Editar</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* RESUMO */}
-
           <View style={styles.card}>
             <View style={styles.infoRow}>
               <MaterialCommunityIcons
@@ -184,57 +124,13 @@ export default function ConfiguracaoScreen({ navigation }) {
                 size={24}
                 color="#1C2E4A"
               />
-
-              <Text
-                style={styles.infoLabel}
-              >
-                Curso
-              </Text>
-
-              <Text
-                style={styles.infoValue}
-              >
-                {curso ||
-                  'Não informado'}
+              <Text style={styles.infoLabel}>Curso</Text>
+              <Text style={styles.infoValue}>
+                {curso || 'Não informado'}
               </Text>
             </View>
 
-            <View
-              style={styles.divider}
-            />
-
-            <View style={styles.infoRow}>
-              <MaterialCommunityIcons
-                name="robot-outline"
-                size={24}
-                color="#1C2E4A"
-              />
-
-              <Text
-                style={styles.infoLabel}
-              >
-                Inteligência Artificial
-              </Text>
-
-              <Text
-                style={[
-                  styles.infoValue,
-                  {
-                    color: iaAtivada
-                      ? 'green'
-                      : 'red',
-                  },
-                ]}
-              >
-                {iaAtivada
-                  ? 'Ativada'
-                  : 'Desativada'}
-              </Text>
-            </View>
-
-            <View
-              style={styles.divider}
-            />
+            <View style={styles.divider} />
 
             <View style={styles.infoRow}>
               <MaterialCommunityIcons
@@ -242,62 +138,32 @@ export default function ConfiguracaoScreen({ navigation }) {
                 size={24}
                 color="#1C2E4A"
               />
-
-              <Text
-                style={styles.infoLabel}
-              >
-                Notificações
-              </Text>
-
+              <Text style={styles.infoLabel}>Notificações</Text>
               <Text
                 style={[
                   styles.infoValue,
-                  {
-                    color:
-                      notificacoesAtivadas
-                        ? 'green'
-                        : 'red',
-                  },
+                  { color: notificacoesAtivadas ? 'green' : 'red' },
                 ]}
               >
-                {notificacoesAtivadas
-                  ? 'Ativadas'
-                  : 'Desativadas'}
+                {notificacoesAtivadas ? 'Ativadas' : 'Desativadas'}
               </Text>
             </View>
           </View>
 
-          {/* MENU */}
-
+          {/* MENU DE OPÇÕES */}
           <View style={styles.listCard}>
             <TouchableOpacity
               style={styles.listItem}
-              onPress={() =>
-                navigation.navigate(
-                  'Receber'
-                )
-              }
+              onPress={() => navigation.navigate('Receber')}
             >
-              <View
-                style={
-                  styles.listItemLeft
-                }
-              >
+              <View style={styles.listItemLeft}>
                 <MaterialCommunityIcons
                   name="bell-outline"
                   size={24}
                   color="#1C2E4A"
                 />
-
-                <Text
-                  style={
-                    styles.listItemText
-                  }
-                >
-                  Notificações
-                </Text>
+                <Text style={styles.listItemText}>Notificações</Text>
               </View>
-
               <Feather
                 name="chevron-right"
                 size={20}
@@ -305,77 +171,20 @@ export default function ConfiguracaoScreen({ navigation }) {
               />
             </TouchableOpacity>
 
-            <View
-              style={styles.divider}
-            />
+            <View style={styles.divider} />
 
             <TouchableOpacity
               style={styles.listItem}
-              onPress={() =>
-                navigation.navigate(
-                  'PreferenciaConfig'
-                )
-              }
+              onPress={() => navigation.navigate('PreferenciaConfig')}
             >
-              <View
-                style={
-                  styles.listItemLeft
-                }
-              >
+              <View style={styles.listItemLeft}>
                 <Feather
                   name="sliders"
                   size={22}
                   color="#1C2E4A"
                 />
-
-                <Text
-                  style={
-                    styles.listItemText
-                  }
-                >
-                  Preferências
-                </Text>
+                <Text style={styles.listItemText}>Preferências</Text>
               </View>
-
-              <Feather
-                name="chevron-right"
-                size={20}
-                color="#1C2E4A"
-              />
-            </TouchableOpacity>
-
-            <View
-              style={styles.divider}
-            />
-
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() =>
-                navigation.navigate(
-                  'IA'
-                )
-              }
-            >
-              <View
-                style={
-                  styles.listItemLeft
-                }
-              >
-                <MaterialCommunityIcons
-                  name="robot-outline"
-                  size={24}
-                  color="#1C2E4A"
-                />
-
-                <Text
-                  style={
-                    styles.listItemText
-                  }
-                >
-                  IA
-                </Text>
-              </View>
-
               <Feather
                 name="chevron-right"
                 size={20}
@@ -383,6 +192,22 @@ export default function ConfiguracaoScreen({ navigation }) {
               />
             </TouchableOpacity>
           </View>
+
+          {/* BOTÃO SAIR: Agora totalmente isolado, distante e centralizado abaixo do bloco */}
+          <View style={styles.sairContainer}>
+            <TouchableOpacity
+              style={styles.btnSairCentrado}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <MaterialCommunityIcons
+                name="logout"
+                size={22}
+                color="#D32F2F"
+              />
+              <Text style={styles.btnSairCentradoText}>Sair</Text>
+            </TouchableOpacity>
+          </View>
+
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>
@@ -393,51 +218,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   mainGradient: {
     flex: 1,
   },
-
   scrollContent: {
-    paddingBottom: 30,
+    paddingBottom: 40,
   },
-
   header: {
     flexDirection: 'row',
-    justifyContent:
-      'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 25,
     paddingTop: 50,
     paddingBottom: 25,
   },
-
   headerTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#1C2E4A',
     marginLeft: 10,
   },
-
   card: {
-    backgroundColor:
-      'rgba(165,192,223,0.6)',
+    backgroundColor: 'rgba(165,192,223,0.6)',
     marginHorizontal: 20,
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
   },
-
   profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   avatarContainer: {
     width: 60,
     height: 60,
@@ -447,89 +262,98 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
-
   avatarImage: {
     width: '100%',
     height: '100%',
   },
-
   profileInfo: {
     flex: 1,
     marginLeft: 15,
   },
-
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1C2E4A',
   },
-
   profileEmail: {
     fontSize: 13,
     color: '#4A5B6D',
   },
-
   btnEditar: {
     backgroundColor: '#FFF',
     paddingVertical: 6,
     paddingHorizontal: 15,
     borderRadius: 15,
   },
-
   btnEditarText: {
     fontWeight: 'bold',
     color: '#1C2E4A',
   },
-
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 10,
   },
-
   infoLabel: {
     flex: 1,
     marginLeft: 12,
     fontWeight: 'bold',
     color: '#1C2E4A',
   },
-
   infoValue: {
     fontWeight: 'bold',
   },
-
   listCard: {
-    backgroundColor:
-      'rgba(165,192,223,0.6)',
+    backgroundColor: 'rgba(165,192,223,0.6)',
     marginHorizontal: 20,
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-
   listItem: {
     flexDirection: 'row',
-    justifyContent:
-      'space-between',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 15,
   },
-
   listItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   listItemText: {
     marginLeft: 15,
     fontSize: 16,
     fontWeight: 'bold',
     color: '#4A5B6D',
   },
-
   divider: {
     height: 1,
     backgroundColor: '#8DA4C4',
     opacity: 0.5,
+  },
+  
+  /* ESTILOS DO NOVO BOTÃO CENTRALIZADO */
+  sairContainer: {
+    alignItems: 'center',
+    marginTop: 40, // Espaçamento generoso do bloco de preferências
+    width: '100%',
+  },
+  btnSairCentrado: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(211, 47, 47, 0.1)', // Fundo vermelho bem suave
+    borderWidth: 1,
+    borderColor: '#D32F2F',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    minWidth: 180,
+  },
+  btnSairCentradoText: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D32F2F',
   },
 });

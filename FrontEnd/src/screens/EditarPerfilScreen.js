@@ -100,11 +100,26 @@ export default function EditarPerfilScreen({ navigation }) {
       style={styles.mainGradient}
     >
       <SafeAreaView style={styles.container}>
+        
+        {/* HEADER MODIFICADO: Sem botão de login/logout */}
         <View style={styles.header}>
+          
+          {/* Botão de retorno adicionado para substituir o logout */}
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.iconButton}
+          >
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={28}
+              color="#1C2E4A"
+            />
+          </TouchableOpacity>
+
           <View style={styles.headerTitleContainer}>
             <MaterialCommunityIcons
               name="account-edit-outline"
-              size={32}
+              size={28}
               color="#1C2E4A"
             />
 
@@ -113,16 +128,8 @@ export default function EditarPerfilScreen({ navigation }) {
             </Text>
           </View>
 
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.iconButton}
-          >
-            <MaterialCommunityIcons
-              name="exit-to-app"
-              size={28}
-              color="#1C2E4A"
-            />
-          </TouchableOpacity>
+          {/* Elemento invisível para contrabalancear o flexbox e manter o título centralizado */}
+          <View style={{ width: 28 }} />
         </View>
 
         <KeyboardAvoidingView
